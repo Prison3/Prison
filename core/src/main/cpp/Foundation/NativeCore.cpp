@@ -3,7 +3,6 @@
 #include "SandboxFs.h"
 #include <jni.h>
 #include "Hook/Hooks.h"
-#include "Utils.h"
 #include "xdl.h"
 #include "xdl/xdl_util.h"
 #include <jni.h>
@@ -370,7 +369,6 @@ static void init(JNIEnv *env, jobject clazz, jobject context, jstring package_na
     
     // Initialize JniHook
     JniHook::InitJniHook(env, VMEnv.api_level);
-    SandboxFs::init(env);
     
     ALOGD("NativeCore initialization completed");
 }
@@ -404,8 +402,8 @@ static void addIORule(JNIEnv *env, jclass clazz, jstring target_path, jstring re
         return;
     }
     
-    ALOGD("Adding I/O rule: %s -> %s", target, relocate);
-    SandboxFs::add_rule(target, relocate);
+    ALOGD("Adding I/O rule: %s -> %s", relocate, target);
+    add_replace_item(relocate, target );
     
     // Release string characters
     env->ReleaseStringUTFChars(target_path, target);

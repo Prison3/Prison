@@ -32,8 +32,8 @@ LOCAL_SRC_FILES := Foundation/NativeCore.cpp \
 Foundation/SandboxFs.cpp \
 Foundation/elf_util.cpp \
 Foundation/VirtualSpoof.cpp \
-Foundation/Utils.cpp \
 Foundation/AntiDetection.cpp \
+Foundation/canonicalize_md.cpp \
 Hook/VMClassLoaderHook.cpp \
 Hook/UnixFileSystemHook.cpp \
 Hook/DexFileHook.cpp \
@@ -41,7 +41,7 @@ Hook/LibcHook.cpp \
 Hook/ZlibHook.cpp \
 Hook/RuntimeHook.cpp \
 Hook/BinderHook.cpp \
-Hook/JniHook.cpp
+Hook/JniHook.cpp \
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH) $(LOCAL_PATH)/Foundation
 LOCAL_CFLAGS += -Wno-error=format-security -fvisibility=hidden -ffunction-sections -fdata-sections -w -std=c++17
