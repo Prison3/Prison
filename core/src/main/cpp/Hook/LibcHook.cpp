@@ -8,9 +8,9 @@
 #include <errno.h>
 #include <limits.h>
 #include "Dobby/dobby.h"
-#include "Foundation/IO.h"
+#include "Foundation/SandboxFs.h"
 #include "Foundation/Log.h"
-#include "Foundation/Hooks.h"
+#include "Hooks.h"
 #include "Foundation/xdl.h"
 
 // Forward declaration of hook_function (was previously in FileSystemHook.cpp)

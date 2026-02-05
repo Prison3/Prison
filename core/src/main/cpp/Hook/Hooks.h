@@ -2,6 +2,7 @@
 #define PRISON_HOOKS_H
 
 #include <jni.h>
+#include "Foundation/ArtMethod.h"
 
 #define HOOK_SYMBOL(handle, func) hook_function(handle, #func, (void*) new_##func, (void**) &orig_##func)
 //#define HOOK_SYMBOL2(handle, func, new_func, old_func) hook_function(handle, #func, (void*) new_func, (void**)old_func)
@@ -9,6 +10,18 @@
   ret (*orig_##func)(__VA_ARGS__); \
   ret new_##func(__VA_ARGS__)
 
+
+#define HOOK_JNI(ret, func, ...) \
+ret (*orig_##func)(__VA_ARGS__); \
+ret new_##func(__VA_ARGS__)
+
+class JniHook {
+public:
+    static void InitJniHook(JNIEnv *env, int api_level);
+    static void HookJniFun(JNIEnv *env, const char *class_name, const char *method_name, const char *sign, void * new_fun, void ** orig_fun,
+                            bool is_static);
+    static void HookJniFun(JNIEnv *env, jobject java_method, void *new_fun, void **orig_fun, bool is_static);
+};
 
 
 class BinderHook {
@@ -48,6 +61,6 @@ class DexFileHook{
     public:
         static void install(JNIEnv *env);
         static void setFileReadonly(const char* filePath);
-    };
+};
 
 #endif //PRISON_BASEHOOK_H

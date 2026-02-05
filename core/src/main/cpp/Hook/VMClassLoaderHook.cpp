@@ -1,8 +1,8 @@
 
 
 #include <cstring>
-#include "Foundation/Hooks.h"
-#include "Foundation/JniHook.h"
+#include "Hooks.h"
+
 
 HOOK_JNI(jobject, findLoadedClass, JNIEnv *env, jobject obj, jobject class_loader, jstring name) {
     const char * nameC = env->GetStringUTFChars(name, JNI_FALSE);

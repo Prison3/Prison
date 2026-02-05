@@ -29,11 +29,10 @@ SRC3 := $(wildcard $(LOCAL_PATH)/Hook/*.cpp) $(wildcard $(LOCAL_PATH)/Hook/*.c)
 
 LOCAL_MODULE := prison
 LOCAL_SRC_FILES := Foundation/NativeCore.cpp \
-Foundation/hidden_api.cpp \
-Foundation/IO.cpp \
+Foundation/SandboxFs.cpp \
 Foundation/elf_util.cpp \
 Foundation/VirtualSpoof.cpp \
-Foundation/HexDump.cpp \
+Foundation/Utils.cpp \
 Foundation/AntiDetection.cpp \
 Hook/VMClassLoaderHook.cpp \
 Hook/UnixFileSystemHook.cpp \
@@ -42,7 +41,7 @@ Hook/LibcHook.cpp \
 Hook/ZlibHook.cpp \
 Hook/RuntimeHook.cpp \
 Hook/BinderHook.cpp \
-Foundation/JniHook.cpp
+Hook/JniHook.cpp
 
 LOCAL_C_INCLUDES += $(LOCAL_PATH) $(LOCAL_PATH)/Foundation
 LOCAL_CFLAGS += -Wno-error=format-security -fvisibility=hidden -ffunction-sections -fdata-sections -w -std=c++17

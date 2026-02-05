@@ -1,5 +1,4 @@
-#include "Foundation/Hooks.h"
-#include "Foundation/JniHook.h"
+#include "Hooks.h"
 #include "Foundation/NativeCore.h"
 #include "Foundation/Log.h"
 

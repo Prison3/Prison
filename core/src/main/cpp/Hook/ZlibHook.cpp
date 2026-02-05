@@ -1,6 +1,6 @@
 // Hook for libz deflate function
 
-#include "Foundation/Hooks.h"
+#include "Hooks.h"
 #include "Foundation/NativeCore.h"
 #include "Foundation/Log.h"
 #include "Foundation/xdl.h"
