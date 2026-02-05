@@ -1,8 +1,7 @@
-
-#include "RuntimeHook.h"
-#import "JniHook/JniHook.h"
-#include "NativeCore.h"
-#include "Log.h"
+#include "Foundation/Hooks.h"
+#include "Foundation/JniHook.h"
+#include "Foundation/NativeCore.h"
+#include "Foundation/Log.h"
 
 HOOK_JNI(jstring, nativeLoad, JNIEnv *env, jobject obj, jstring name, jobject class_loader) {
     const char *nameC = env->GetStringUTFChars(name, JNI_FALSE);

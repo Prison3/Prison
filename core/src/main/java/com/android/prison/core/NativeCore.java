@@ -1,5 +1,6 @@
 package com.android.prison.core;
 
+import android.content.Context;
 import android.os.Process;
 
 import androidx.annotation.Keep;
@@ -42,11 +43,12 @@ public class NativeCore {
 
     /**
      * Enables native I/O hooks for file system redirection.
+     * API level is obtained automatically from native layer.
      * 
-     * @param apiLevel Android API level
+     * @param context Android context for accessing system services
      * @param packageName Package name of the virtualized application
      */
-    public static native void installHooks(int apiLevel, String packageName);
+    public static native void installHooks(Context context, String packageName);
 
     /**
      * Adds an I/O redirection rule.

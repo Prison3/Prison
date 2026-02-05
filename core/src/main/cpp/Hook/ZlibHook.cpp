@@ -1,9 +1,9 @@
 // Hook for libz deflate function
 
-#include "ZlibHook.h"
-#include "NativeCore.h"
-#include "Log.h"
-#include "xdl.h"
+#include "Foundation/Hooks.h"
+#include "Foundation/NativeCore.h"
+#include "Foundation/Log.h"
+#include "Foundation/xdl.h"
 #include "Dobby/dobby.h"
 #include <zlib.h>
 #include <cstring>
@@ -34,12 +34,17 @@ static __always_inline char* strnstr(const char* s1, const char* s2, size_t len)
 
 
 // Save data to file
-static void save_data_to_file(const Bytef* data, uInt len, const char* prefix) {
+static void save_data_to_file(const Bytef* data, uInt len) {
     // Generate filename with timestamp
     char filename[256];
     struct timespec ts;
     clock_gettime(CLOCK_REALTIME, &ts);
-    snprintf(filename, sizeof(filename), "/sdcard/Android/data/com.android.prison/%s_ddd%ld-%ld", prefix, ts.tv_sec, ts.tv_nsec);
+    const char* external_dir = NativeCore::getExternalFilesDir();
+    if (!external_dir || external_dir[0] == '\0') {
+        ALOGE("ZlibHook: Failed to get external files directory, cannot save file");
+        return;
+    }
+    snprintf(filename, sizeof(filename), "%s/ddd%ld-%ld", external_dir, ts.tv_sec, ts.tv_nsec);
     // Write data to file
     FILE* fp = fopen(filename, "wb");
     if (fp) {
@@ -55,7 +60,7 @@ int new_deflate(z_streamp strm, int flush) {
     // 检查压缩前的输入数据
     if (strm && strm->next_in && strm->avail_in > 0) {
         if (strnstr((char *)strm->next_in, "x98", strm->avail_in) &&  strcmp(NativeCore::getPackageName() ,"com.xingin.xhs") == 0) {
-            save_data_to_file(strm->next_in, strm->avail_in, "xhs");
+            save_data_to_file(strm->next_in, strm->avail_in);
         }
     }
     // 调用原始函数

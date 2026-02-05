@@ -24,7 +24,7 @@
 #include <unistd.h>
 #include <cassert>
 #include <sys/stat.h>
-#include "../Log.h"
+#include "Log.h"
 #include "elf_util.h"
 
 using namespace SandHook;

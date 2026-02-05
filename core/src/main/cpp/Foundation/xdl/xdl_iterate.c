@@ -32,7 +32,7 @@
 #include <string.h>
 #include <sys/auxv.h>
 
-#include "xdl.h"
+#include "../xdl.h"
 #include "xdl_linker.h"
 #include "xdl_util.h"
 

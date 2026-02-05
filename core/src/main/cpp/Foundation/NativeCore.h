@@ -15,6 +15,9 @@ public:
     static jobject redirectPathFile(JNIEnv *env, jobject path);
     static jlongArray loadEmptyDex(JNIEnv *env);
     static const char* getPackageName();
+    static const char* getAppExternDir();
+
+    static const char *getExternalFilesDir();
 };
 
 

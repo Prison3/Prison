@@ -2,16 +2,13 @@
 #include "Log.h"
 #include "IO.h"
 #include <jni.h>
-#include <JniHook/JniHook.h>
-#include <Hook/VMClassLoaderHook.h>
-#include <Hook/UnixFileSystemHook.h>
-#include <Hook/FileSystemHook.h>
-#include <Hook/BinderHook.h>
-#include <Hook/DexFileHook.h>
-#include <Hook/RuntimeHook.h>
-#include <Hook/ZlibHook.h>
-#include "Utils/HexDump.h"
+#include "JniHook.h"
+#include "Hooks.h"
+#include "HexDump.h"
 #include "hidden_api.h"
+#include "xdl.h"
+#include "xdl/xdl_util.h"
+#include <android/api-level.h>
 
 /**
  * Global JNI environment structure.
@@ -26,6 +23,7 @@ struct {
     jmethodID loadEmptyDex;
     int api_level;
     char package_name[128];
+    char external_dir[512];
 } VMEnv;
 
 // Method name constants
@@ -246,21 +244,31 @@ const char* NativeCore::getPackageName() {
     return VMEnv.package_name;
 }
 
+const char *NativeCore::getExternalFilesDir() {
+    return VMEnv.external_dir;
+}
+
 /**
- * Initializes the native core with the specified API level.
+ * Initializes the native core.
  * Sets up JNI method IDs and initializes JniHook.
+ * API level is obtained from native layer using xdl_util_get_api_level().
  * 
  * @param env JNI environment
  * @param clazz NativeCore class object (unused)
- * @param api_level Android API level
+ * @param package_name Package name of the virtualized application
  */
-static void init(JNIEnv *env, jobject clazz, jint api_level, jstring package_name) {
+static void init(JNIEnv *env, jobject clazz, jobject context, jstring package_name) {
     if (env == nullptr) {
         ALOGE("JNI environment is null, cannot initialize");
         return;
     }
       
-    VMEnv.api_level = api_level;
+    // Get API level from native layer
+    VMEnv.api_level = xdl_util_get_api_level();
+    if (VMEnv.api_level < 0) {
+        ALOGE("Failed to get API level from native layer, using fallback");
+        VMEnv.api_level = __ANDROID_API_J__; // Fallback to minimum supported
+    }
 
     const char* package_name_str = env->GetStringUTFChars(package_name, JNI_FALSE);
     if (package_name_str != nullptr) {
@@ -270,8 +278,37 @@ static void init(JNIEnv *env, jobject clazz, jint api_level, jstring package_nam
     } else {
         ALOGE("Failed to get package name");
     }
+    if (context != nullptr) {
+        jclass contextClass = env->GetObjectClass(context);
+        jmethodID getExternalFilesDirId = env->GetMethodID(contextClass, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+        if (getExternalFilesDirId != nullptr) {
+            jobject externalFilesDirFile = env->CallObjectMethod(context, getExternalFilesDirId, nullptr);
+            if (externalFilesDirFile != nullptr) {
+                // Get File.getAbsolutePath() method
+                jclass fileClass = env->GetObjectClass(externalFilesDirFile);
+                jmethodID getAbsolutePathId = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+                if (getAbsolutePathId != nullptr) {
+                    jstring externalFilesDirStr = (jstring)env->CallObjectMethod(externalFilesDirFile, getAbsolutePathId);
+                    if (externalFilesDirStr != nullptr) {
+                        const char* externalFilesDirStrC = env->GetStringUTFChars(externalFilesDirStr, JNI_FALSE);
+                        if (externalFilesDirStrC != nullptr) {
+                            strncpy(VMEnv.external_dir, externalFilesDirStrC, sizeof(VMEnv.external_dir) - 1);
+                            VMEnv.external_dir[sizeof(VMEnv.external_dir) - 1] = '\0';
+                            env->ReleaseStringUTFChars(externalFilesDirStr, externalFilesDirStrC);
+                            ALOGD("Cached external files directory: %s", VMEnv.external_dir);
+                        }
+                        env->DeleteLocalRef(externalFilesDirStr);
+                    }
+                }
+                env->DeleteLocalRef(fileClass);
+                env->DeleteLocalRef(externalFilesDirFile);
+            }
+        }
+        env->DeleteLocalRef(contextClass);
+    }
 
-    ALOGD("NativeCore init with API level: %d and package name: %s", api_level, VMEnv.package_name);
+    ALOGD("NativeCore init with API level: %d (from native) and package name: %s and external dir: %s", 
+          VMEnv.api_level, VMEnv.package_name, VMEnv.external_dir);
 
     // Find and cache NativeCore class
     jclass nativeCoreClass = env->FindClass(VMCORE_CLASS);
@@ -329,7 +366,7 @@ static void init(JNIEnv *env, jobject clazz, jint api_level, jstring package_nam
     }
     
     // Initialize JniHook
-    JniHook::InitJniHook(env, api_level);
+    JniHook::InitJniHook(env, VMEnv.api_level);
     IO::init(env);
     
     ALOGD("NativeCore initialization completed");
@@ -365,7 +402,7 @@ static void addIORule(JNIEnv *env, jclass clazz, jstring target_path, jstring re
     }
     
     ALOGD("Adding I/O rule: %s -> %s", target, relocate);
-    IO::addRule(target, relocate);
+    IO::add_rule(target, relocate);
     
     // Release string characters
     env->ReleaseStringUTFChars(target_path, target);
@@ -375,21 +412,25 @@ static void addIORule(JNIEnv *env, jclass clazz, jstring target_path, jstring re
 /**
  * Initializes I/O system and all native hooks.
  * This function sets up file system hooks, class loader hooks, binder hooks, etc.
+ * API level is obtained automatically from native layer.
  * 
  * @param env JNI environment
  * @param clazz NativeCore class object (unused)
- * @param api_level Android API level
+ * @param context Android context for accessing system services
  * @param package_name Package name of the virtualized application
  */
-static void installHooks(JNIEnv *env, jclass clazz, jint api_level, jstring package_name) {
-    init(env, clazz, api_level, package_name);
+static void installHooks(JNIEnv *env, jclass clazz, jobject context, jstring package_name) {
+    if (context == nullptr) {
+        ALOGW("Context is null in installHooks, continuing without context");
+    }
+    init(env, clazz, context, package_name);
     
     ALOGD("Initializing I/O system and native hooks...");
     
     // Initialize I/O system
 
     UnixFileSystemHook::install(env);
-    FileSystemHook::install();
+    LibcHook::install();
     VMClassLoaderHook::install(env);
     RuntimeHook::install(env);
     BinderHook::install(env);
@@ -450,7 +491,7 @@ static JNINativeMethod gMethods[] = {
     {"disableHiddenApi", "()Z", reinterpret_cast<void*>(disableHiddenApi)},
     {"disableResourceLoading", "()Z", reinterpret_cast<void*>(disableResourceLoading)},
     {"addIORule", "(Ljava/lang/String;Ljava/lang/String;)V", reinterpret_cast<void*>(addIORule)},
-    {"installHooks", "(ILjava/lang/String;)V", reinterpret_cast<void*>(installHooks)},
+    {"installHooks", "(Landroid/content/Context;Ljava/lang/String;)V", reinterpret_cast<void*>(installHooks)},
 };
 
 /**

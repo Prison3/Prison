@@ -160,7 +160,7 @@ public final class PrisonCore {
         }
     }
 
-    
+
     public boolean launchApk(String packageName, int userId) {
         mAppCallback.beforeMainLaunchApk(packageName,userId);
         // Check storage permissions on Android 11+ (SDK 30+)

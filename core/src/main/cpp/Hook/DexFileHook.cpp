@@ -1,10 +1,9 @@
-#include "DexFileHook.h"
-#include <IO.h>
-#include <NativeCore.h>
-#include "UnixFileSystemHook.h"
-#import "JniHook/JniHook.h"
+#include "Foundation/Hooks.h"
+#include "Foundation/IO.h"
+#include "Foundation/NativeCore.h"
+#include "Foundation/JniHook.h"
+#include "Foundation/Log.h"
 #include <sys/stat.h>
-#include "Log.h"
 
 HOOK_JNI(jobject, openDexFileNative, JNIEnv *env, jobject obj,jstring sourceName, jstring outputName, jint flags,jobject loader, jobject elements) {
     const char *sourceNameC = env->GetStringUTFChars(sourceName, JNI_FALSE);

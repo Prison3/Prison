@@ -1,8 +1,7 @@
-
-#include <IO.h>
-#include "UnixFileSystemHook.h"
-#import "JniHook/JniHook.h"
-#include "Log.h"
+#include "Foundation/Hooks.h"
+#include "Foundation/JniHook.h"
+#include "Foundation/Log.h"
+#include "Foundation/IO.h"
 
 /*
  * Class:     java_io_UnixFileSystem
@@ -10,7 +9,7 @@
  * Signature: (Ljava/lang/String;)Ljava/lang/String;
  */
 HOOK_JNI(jstring, canonicalize0, JNIEnv *env, jobject obj, jstring path) {
-    jstring redirect = IO::redirectPath(env, path);
+    jstring redirect = IO::redirect_path(env, path);
     return orig_canonicalize0(env, obj, redirect);
 }
 
@@ -20,7 +19,7 @@ HOOK_JNI(jstring, canonicalize0, JNIEnv *env, jobject obj, jstring path) {
  * Signature: (Ljava/lang/String;)I
  */
 HOOK_JNI(jint, getBooleanAttributes0, JNIEnv *env, jobject obj, jstring abspath) {
-    jstring redirect = IO::redirectPath(env, abspath);
+    jstring redirect = IO::redirect_path(env, abspath);
     return orig_getBooleanAttributes0(env, obj, redirect);
 }
 
@@ -30,7 +29,7 @@ HOOK_JNI(jint, getBooleanAttributes0, JNIEnv *env, jobject obj, jstring abspath)
  * Signature: (Ljava/io/File;)J
  */
 HOOK_JNI(jlong, getLastModifiedTime0, JNIEnv *env, jobject obj, jobject path) {
-    jobject redirect = IO::redirectPath(env, path);
+    jobject redirect = IO::redirect_path(env, path);
     return orig_getLastModifiedTime0(env, obj, redirect);
 }
 
@@ -41,7 +40,7 @@ HOOK_JNI(jlong, getLastModifiedTime0, JNIEnv *env, jobject obj, jobject path) {
  */
 HOOK_JNI(jboolean, setPermission0, JNIEnv *env, jobject obj, jobject file, jint access,
          jboolean enable, jboolean owneronly) {
-    jobject redirect = IO::redirectPath(env, file);
+    jobject redirect = IO::redirect_path(env, file);
     return orig_setPermission0(env, obj, redirect, access, enable, owneronly);
 }
 
@@ -51,7 +50,7 @@ HOOK_JNI(jboolean, setPermission0, JNIEnv *env, jobject obj, jobject file, jint 
  * Signature: (Ljava/lang/String;)Z
  */
 HOOK_JNI(jboolean, createFileExclusively0, JNIEnv *env, jobject obj, jstring path) {
-    jstring redirect = IO::redirectPath(env, path);
+    jstring redirect = IO::redirect_path(env, path);
     return orig_createFileExclusively0(env, obj, redirect);
 }
 
@@ -61,7 +60,7 @@ HOOK_JNI(jboolean, createFileExclusively0, JNIEnv *env, jobject obj, jstring pat
  * Signature: (Ljava/io/File;)[Ljava/lang/String;
  */
 HOOK_JNI(jobjectArray, list0, JNIEnv *env, jobject obj, jobject file) {
-    jobject redirect = IO::redirectPath(env, file);
+    jobject redirect = IO::redirect_path(env, file);
     return orig_list0(env, obj, redirect);
 }
 
@@ -71,7 +70,7 @@ HOOK_JNI(jobjectArray, list0, JNIEnv *env, jobject obj, jobject file) {
  * Signature: (Ljava/io/File;)Z
  */
 HOOK_JNI(jboolean, createDirectory0, JNIEnv *env, jobject obj, jobject path) {
-    jobject redirect = IO::redirectPath(env, path);
+    jobject redirect = IO::redirect_path(env, path);
     return orig_createDirectory0(env, obj, redirect);
 }
 
@@ -81,7 +80,7 @@ HOOK_JNI(jboolean, createDirectory0, JNIEnv *env, jobject obj, jobject path) {
  * Signature: (Ljava/io/File;J)Z
  */
 HOOK_JNI(jboolean, setLastModifiedTime0, JNIEnv *env, jobject obj, jobject file, jobject time) {
-    jobject redirect = IO::redirectPath(env, file);
+    jobject redirect = IO::redirect_path(env, file);
     return orig_setLastModifiedTime0(env, obj, redirect, time);
 }
 
@@ -91,7 +90,7 @@ HOOK_JNI(jboolean, setLastModifiedTime0, JNIEnv *env, jobject obj, jobject file,
  * Signature: (Ljava/io/File;)Z
  */
 HOOK_JNI(jboolean, setReadOnly0, JNIEnv *env, jobject obj, jobject file) {
-    jobject redirect = IO::redirectPath(env, file);
+    jobject redirect = IO::redirect_path(env, file);
     return orig_setReadOnly0(env, obj, redirect);
 }
 
@@ -101,7 +100,7 @@ HOOK_JNI(jboolean, setReadOnly0, JNIEnv *env, jobject obj, jobject file) {
  * Signature: (Ljava/io/File;I)J
  */
 HOOK_JNI(jboolean, getSpace0, JNIEnv *env, jobject obj, jobject file, jint t) {
-    jobject redirect = IO::redirectPath(env, file);
+    jobject redirect = IO::redirect_path(env, file);
     return orig_getSpace0(env, obj, redirect, t);
 }
 

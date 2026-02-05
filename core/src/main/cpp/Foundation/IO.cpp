@@ -30,7 +30,7 @@ char *replace(const char *str, const char *src, const char *dst) {
     return result;
 }
 
-const char *IO::redirectPath(const char *__path) {
+const char *IO::redirect_path(const char *__path) {
     // Block ALL resource-cache related paths that cause issues
     if (strstr(__path, "resource-cache")) {
         ALOGD("Blocking resource-cache path: %s", __path);
@@ -79,29 +79,44 @@ const char *IO::redirectPath(const char *__path) {
     return __path;
 }
 
-jstring IO::redirectPath(JNIEnv *env, jstring path) {
+jstring IO::redirect_path(JNIEnv *env, jstring path) {
 //    const char * pathC = env->GetStringUTFChars(path, JNI_FALSE);
-//    const char *redirect = redirectPath(pathC);
+//    const char *redirect = redirect_path(pathC);
 //    env->ReleaseStringUTFChars(path, pathC);
 //    return env->NewStringUTF(redirect);
     return NativeCore::redirectPathString(env, path);
 }
 
-jobject IO::redirectPath(JNIEnv *env, jobject path) {
+jobject IO::redirect_path(JNIEnv *env, jobject path) {
 //    auto pathStr =
 //            reinterpret_cast<jstring>(env->CallObjectMethod(path, getAbsolutePathMethodId));
-//    jstring redirect = redirectPath(env, pathStr);
+//    jstring redirect = redirect_path(env, pathStr);
 //    jobject file = env->NewObject(fileClazz, fileNew, redirect);
 //    env->DeleteLocalRef(pathStr);
 //    env->DeleteLocalRef(redirect);
     return NativeCore::redirectPathFile(env, path);
 }
 
-void IO::addRule(const char *targetPath, const char *relocatePath) {
+void IO::add_rule(const char *targetPath, const char *relocatePath) {
     IO::RelocateInfo info{};
     info.targetPath = targetPath;
     info.relocatePath = relocatePath;
     relocate_rule.push_back(info);
+}
+
+const char *IO::relocate_path(const char *__path, char *buf, size_t buf_size) {
+    const char *redirected = redirect_path(__path);
+    if (redirected == __path) {
+        // No redirection, copy original path
+        strncpy(buf, __path, buf_size - 1);
+        buf[buf_size - 1] = '\0';
+        return buf;
+    } else {
+        // Path was redirected, copy redirected path
+        strncpy(buf, redirected, buf_size - 1);
+        buf[buf_size - 1] = '\0';
+        return buf;
+    }
 }
 
 void IO::init(JNIEnv *env) {

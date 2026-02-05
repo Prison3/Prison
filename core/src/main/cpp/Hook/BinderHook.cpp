@@ -1,9 +1,7 @@
-
-#include "BinderHook.h"
-#include <IO.h>
-#include <NativeCore.h>
-#include "UnixFileSystemHook.h"
-#import "JniHook/JniHook.h"
+#include "Foundation/Hooks.h"
+#include "Foundation/IO.h"
+#include "Foundation/NativeCore.h"
+#include "Foundation/JniHook.h"
 
 
 

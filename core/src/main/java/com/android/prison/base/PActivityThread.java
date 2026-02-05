@@ -381,7 +381,7 @@ public class PActivityThread extends IPActivityThread.Stub {
         }
 
         IOCore.get().setupRedirect(packageContext);
-        NativeCore.installHooks(Build.VERSION.SDK_INT, packageName);
+        NativeCore.installHooks(packageContext, packageName);
 
         AppBindData bindData = new AppBindData();
         bindData.appInfo = applicationInfo;
