@@ -1,5 +1,5 @@
 #include "Hooks.h"
-#include "Foundation/Log.h"
+#include "Foundation/Logger.h"
 #include "Foundation/SandboxFs.h"
 #include "Foundation/NativeCore.h"
 

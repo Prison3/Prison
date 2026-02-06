@@ -17,7 +17,7 @@
 
 // Created by caikelun on 2020-10-04.
 
-#include "../xdl.h"
+#include "xdl.h"
 
 #include <android/api-level.h>
 #include <elf.h>

@@ -7,22 +7,82 @@
 #include <cstring>
 #include <errno.h>
 #include <limits.h>
+#include <syscall.h>
+#include <cstdio>
 #include "Dobby/dobby.h"
 #include "Foundation/SandboxFs.h"
-#include "Foundation/Log.h"
+#include "Foundation/Logger.h"
 #include "Hooks.h"
-#include "Foundation/xdl.h"
+#include "Foundation/xdl/xdl.h"
+#include <unistd.h>
 
-// Forward declaration of hook_function (was previously in FileSystemHook.cpp)
-static inline void
-hook_function(void *handle, const char *symbol, void *new_func, void **old_func);
 
-// The rest of the original FileSystemHook.cpp content should remain the same.
-// For brevity, we assume the body (all HOOK_DEF implementations) is unchanged
-// and only the install() wiring and logging name change to LibcHook.
 
-// NOTE: In the actual project, you should move all existing hook definitions
-// from FileSystemHook.cpp into this file above install().
+// int openat(int fd, const char *pathname, int flags, int mode);
+HOOK_DEF(int, openat, int fd, const char *pathname, int flags, int mode) {
+    char temp[PATH_MAX];
+    const char *relocated_path = relocate_path(pathname, temp, sizeof(temp));
+    if (relocated_path) {
+        if ((flags & O_ACCMODE) == O_WRONLY) {
+            flags &= ~O_ACCMODE;
+            flags |= O_RDWR;
+        }
+        int ret = syscall(__NR_openat, fd, relocated_path, flags, mode);
+        return ret;
+    }
+    errno = EACCES;
+    return -1;
+}
+
+
+HOOK_DEF(int, faccessat, int dirfd, const char *pathname, int mode, int flags) {
+    char temp[PATH_MAX];
+    //ALOGD("LibcHook faccessat pathname %s dirfd %d mode %d flags %d" , pathname, dirfd, mode, flags);
+    const char *relocated_path = relocate_path(pathname, temp, sizeof(temp));
+    if (relocated_path && !(mode & W_OK && isReadOnly(relocated_path))) {
+        //ALOGD("LibcHook faccessat pathname %s -> %s dirfd %d mode %d flags %d" , pathname, relocated_path, dirfd, mode, flags);
+        return syscall(__NR_faccessat, dirfd, relocated_path, mode, flags);
+    }
+    errno = EACCES;
+    return -1;
+}
+
+// int open(const char *pathname, int flags, ...);
+HOOK_DEF(int, open, const char *pathname, int flags, ...) {
+    char temp[PATH_MAX];
+    const char *relocated_path = relocate_path(pathname, temp, sizeof(temp));
+    if (relocated_path) {
+        mode_t mode = 0;
+        if (flags & O_CREAT) {
+            va_list args;
+            va_start(args, flags);
+            mode = va_arg(args, mode_t);
+            va_end(args);
+        }
+        
+        if ((flags & O_ACCMODE) == O_WRONLY) {
+            flags &= ~O_ACCMODE;
+            flags |= O_RDWR;
+        }
+        int ret = syscall(__NR_openat, AT_FDCWD, relocated_path, flags, mode);
+        return ret;
+    }
+    errno = EACCES;
+    return -1;
+}
+
+// FILE* fopen(const char *pathname, const char *mode);
+HOOK_DEF(FILE*, fopen, const char *pathname, const char *mode) {
+    //ALOGD("LibcHook fopen CALLED pathname %s mode %s", pathname ? pathname : "(null)", mode ? mode : "(null)");
+    char temp[PATH_MAX];
+    const char *relocated_path = relocate_path(pathname, temp, sizeof(temp));
+    if (relocated_path) {
+        FILE* ret = orig_fopen(relocated_path, mode);
+        return ret;
+    }
+    errno = EACCES;
+    return nullptr;
+}
 
 void LibcHook::install() {
     ALOGD("LibcHook: Initializing file system hooks");
@@ -45,8 +105,10 @@ void LibcHook::install() {
         // HOOK_SYMBOL(handle, statfs64);
         // HOOK_SYMBOL(handle, kill);
         // HOOK_SYMBOL(handle, vfork);
-        // HOOK_SYMBOL(handle, faccessat);
-        // HOOK_SYMBOL(handle, openat);
+         HOOK_SYMBOL(handle, faccessat);
+         HOOK_SYMBOL(handle, openat);
+         HOOK_SYMBOL(handle, open);
+         HOOK_SYMBOL(handle, fopen);
         // HOOK_SYMBOL(handle, fchmodat);
         // HOOK_SYMBOL(handle, fstatat64);
         // HOOK_SYMBOL(handle, statfs);

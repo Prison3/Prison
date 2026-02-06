@@ -2,8 +2,8 @@
 
 #include "Hooks.h"
 #include "Foundation/NativeCore.h"
-#include "Foundation/Log.h"
-#include "Foundation/xdl.h"
+#include "Foundation/Logger.h"
+#include "Foundation/xdl/xdl.h"
 #include "Dobby/dobby.h"
 #include <zlib.h>
 #include <cstring>

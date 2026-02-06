@@ -2,7 +2,7 @@
 #include <cstring>
 #include "SandboxFs.h"
 #include "canonicalize_md.h"
-#include "Log.h"
+#include "Logger.h"
 
 PathItem *keep_items;
 PathItem *forbidden_items;

@@ -1,7 +1,7 @@
 
 #include <jni.h>
 #include "Hooks.h"
-#include "Foundation/Log.h"
+#include "Foundation/Logger.h"
 #include "Foundation/ArtMethod.h"
 
 static struct {
@@ -123,16 +123,14 @@ bool CheckFlags(void *artMethod) {
     }
 }
 
-void JniHook::HookJniFun(JNIEnv *env, jobject java_method, void *new_fun,
-                         void **orig_fun, bool is_static) {
+void JniHook::HookJniFun(JNIEnv *env, jobject java_method, void *new_fun, void **orig_fun, bool is_static) {
     const char *class_name = GetMethodDeclaringClass(env, java_method);
     const char *method_name = GetMethodName(env, java_method);
     const char *sign = GetMethodDesc(env, java_method);
     HookJniFun(env, class_name, method_name, sign, new_fun, orig_fun, is_static);
 }
 
-void
-JniHook::HookJniFun(JNIEnv *env, const char *class_name, const char *method_name, const char *sign,
+void JniHook::HookJniFun(JNIEnv *env, const char *class_name, const char *method_name, const char *sign,
                     void *new_fun, void **orig_fun, bool is_static) {
     if (HookEnv.art_method_native_offset == 0) {
         return;

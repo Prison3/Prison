@@ -1,15 +1,15 @@
 #include "NativeCore.h"
-#include "Log.h"
+#include "Logger.h"
 #include "SandboxFs.h"
 #include <jni.h>
 #include "Hook/Hooks.h"
-#include "xdl.h"
+#include "Foundation/xdl/xdl.h"
 #include "xdl/xdl_util.h"
 #include <jni.h>
 #include <sys/system_properties.h>
-#include "xdl.h"
+#include "Foundation/xdl/xdl.h"
 #include "elf_util.h"
-#include "Log.h"
+#include "Logger.h"
 #include <android/api-level.h>
 
 /**
@@ -402,8 +402,8 @@ static void addIORule(JNIEnv *env, jclass clazz, jstring target_path, jstring re
         return;
     }
     
-    ALOGD("Adding I/O rule: %s -> %s", relocate, target);
-    add_replace_item(relocate, target );
+    ALOGD("Adding I/O rule: %s -> %s",  target, relocate);
+    add_replace_item( target, relocate );
     
     // Release string characters
     env->ReleaseStringUTFChars(target_path, target);

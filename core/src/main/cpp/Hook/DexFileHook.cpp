@@ -1,7 +1,7 @@
 #include "Hooks.h"
 #include "Foundation/SandboxFs.h"
 #include "Foundation/NativeCore.h"
-#include "Foundation/Log.h"
+#include "Foundation/Logger.h"
 #include <sys/stat.h>
 
 HOOK_JNI(jobject, openDexFileNative, JNIEnv *env, jobject obj,jstring sourceName, jstring outputName, jint flags,jobject loader, jobject elements) {

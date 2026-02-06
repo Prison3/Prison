@@ -226,7 +226,7 @@ collapse(const char *const original, char *const path, size_t len) {
 /* Convert a absolute pathname to canonical form.  The input path is assumed to contain
    no duplicate slashes. */
 
-const char *
+extern "C" const char *
 canonicalize_path(const char *const original, char *const resolved, size_t len)
 {
     if (original[0] != '/') {

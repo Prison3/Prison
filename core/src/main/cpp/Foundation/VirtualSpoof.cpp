@@ -1,6 +1,6 @@
 #include <sys/system_properties.h>
 #include <cstring>
-#include "xdl.h"
+#include "Foundation/xdl/xdl.h"
 #include <android/log.h>
 #include <dlfcn.h>
 #include "Dobby/dobby.h"

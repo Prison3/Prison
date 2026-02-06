@@ -3,9 +3,10 @@
 
 #include <jni.h>
 #include "Foundation/ArtMethod.h"
+#include "xdl/xdl.h"
+#include "Dobby/dobby.h"
 
 #define HOOK_SYMBOL(handle, func) hook_function(handle, #func, (void*) new_##func, (void**) &orig_##func)
-//#define HOOK_SYMBOL2(handle, func, new_func, old_func) hook_function(handle, #func, (void*) new_func, (void**)old_func)
 #define HOOK_DEF(ret, func, ...) \
   ret (*orig_##func)(__VA_ARGS__); \
   ret new_##func(__VA_ARGS__)
@@ -14,6 +15,14 @@
 #define HOOK_JNI(ret, func, ...) \
 ret (*orig_##func)(__VA_ARGS__); \
 ret new_##func(__VA_ARGS__)
+
+static inline void hook_function(void *handle, const char *symbol, void *new_func, void **old_func) {
+    void *sym = xdl_sym(handle, symbol, nullptr);
+    if (sym == nullptr) {
+        return;
+    }
+    DobbyHook(sym, new_func, old_func);
+}
 
 class JniHook {
 public:
@@ -36,7 +45,6 @@ class ZlibHook {
 
 class VMClassLoaderHook {
     public:
-        static void hideXposed();
         static void install(JNIEnv *env);
 };
 
