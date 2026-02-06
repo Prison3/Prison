@@ -1,5 +1,13 @@
 # Prison Core System Documentation
 
+## Repository Information
+
+- **GitHub**: [https://github.com/Prison3/prison](https://github.com/Prison3/prison)
+- **License**: Apache License 2.0
+- **996.ICU**: [https://996.icu](https://996.icu) | [https://github.com/996icu/996.ICU](https://github.com/996icu/996.ICU)
+
+> ⚠️ **996.ICU Statement**: This project supports the 996.ICU movement. We believe in reasonable working hours and work-life balance.
+
 ## Purpose and Use Cases
 
 Prison is a core framework for Android app virtualization/sandboxing. It isolates and runs target apps inside a host
@@ -278,7 +286,26 @@ Start ProxyService
   - ActivityManagerService internals
   - InjectorManager proxy class reference
   - Virtualization of Android's four core components
+
+## License
+
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) file for details.
+
+## Links
+
+- **GitHub Repository**: [https://github.com/Prison3/prison](https://github.com/Prison3/prison)
+- **996.ICU Movement**: [https://996.icu](https://996.icu) | [GitHub](https://github.com/996icu/996.ICU)
+
+---
 # Prison Core System Documentation
+
+## Repository Information
+
+- **GitHub**: [https://github.com/Prison3/prison](https://github.com/Prison3/prison)
+- **License**: Apache License 2.0
+- **996.ICU**: [https://996.icu](https://996.icu) | [https://github.com/996icu/996.ICU](https://github.com/996icu/996.ICU)
+
+> ⚠️ **996.ICU Statement**: This project supports the 996.ICU movement. We believe in reasonable working hours and work-life balance.
 
 ## Purpose and Use Cases
 
@@ -558,3 +585,14 @@ Start ProxyService
   - ActivityManagerService internals
   - InjectorManager proxy reference
   - Android components virtualization
+
+## License
+
+This project is licensed under the Apache License 2.0. See [LICENSE](LICENSE) file for details.
+
+## Links
+
+- **GitHub Repository**: [https://github.com/Prison3/prison](https://github.com/Prison3/prison)
+- **996.ICU Movement**: [https://996.icu](https://996.icu) | [GitHub](https://github.com/996icu/996.ICU)
+
+---
