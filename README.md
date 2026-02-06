@@ -4,7 +4,10 @@
 
 - **GitHub**: [https://github.com/Prison3/prison](https://github.com/Prison3/prison)
 - **License**: Apache License 2.0
-- **996.ICU**: [https://996.icu](https://996.icu) | [https://github.com/996icu/996.ICU](https://github.com/996icu/996.ICU)
+[![Badge](https://img.shields.io/badge/link-996.icu-%23FF4D5B.svg?style=flat-square)](https://996.icu/#/en_US)
+[![LICENSE](https://img.shields.io/badge/license-Anti%20996-blue.svg?style=flat-square)](https://github.com/996icu/996.ICU/blob/master/LICENSE)
+[![Slack](https://img.shields.io/badge/slack-996icu-green.svg?style=flat-square)](https://join.slack.com/t/996icu/shared_invite/enQtNjI0MjEzMTUxNDI0LTkyMGViNmJiZjYwOWVlNzQ3NmQ4NTQyMDRiZTNmOWFkMzYxZWNmZGI0NDA4MWIwOGVhOThhMzc3NGQyMDBhZDc)
+[![HitCount](http://hits.dwyl.com/996icu/996ICU.svg)](http://hits.dwyl.com/996icu/996ICU)
 
 > ⚠️ **996.ICU Statement**: This project supports the 996.ICU movement. We believe in reasonable working hours and work-life balance.
 
