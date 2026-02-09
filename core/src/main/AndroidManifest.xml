@@ -497,6 +497,29 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.READ_MEDIA_AURAL_USER_SELECTED" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.google.android.gms.permission.AD_ID"/>
+    <uses-permission android:name="com.asus.msa.SupplementaryDID.ACCESS"/>
+    <uses-permission android:name="freemme.permission.msa"/>
+    <queries>
+        <package android:name="com.google.android.gms"/>
+        <package android:name="com.android.vending"/>
+        <package android:name="com.android.creator"/>
+        <package android:name="com.mdid.msa"/>
+        <package android:name="com.samsung.android.deviceidservice"/>
+        <package android:name="com.coolpad.deviceidsupport"/>
+        <package android:name="com.heytap.openid"/>
+        <package android:name="com.huawei.hwid"/>
+        <package android:name="com.huawei.hwid.tv"/>
+        <package android:name="com.huawei.hms"/>
+        <package android:name="com.asus.msa.SupplementaryDID"/>
+        <package android:name="com.zui.deviceidservice"/>
+        <package android:name="com.qiku.id"/>
+        <package android:name="com.hihonor.id"/>
+    </queries>
 
     <application>
         <provider
