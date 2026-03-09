@@ -18,7 +18,3 @@
 .cxx
 local.properties
 /app/release/
-# Keystore files (安全考虑，不要提交签名密钥)
-*.keystore
-*.jks
-android.keystore
