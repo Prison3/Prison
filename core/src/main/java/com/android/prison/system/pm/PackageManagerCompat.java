@@ -36,21 +36,21 @@ import com.android.prison.utils.BuildCompat;
 @SuppressLint({"SdCardPath", "NewApi"})
 public class PackageManagerCompat {
 
-    public static PackageInfo generatePackageInfo(PPackageSettings ps, int flags, BPackageUserState state, int userId) {
-        if (ps == null) {
-            return null;
-        }
-        BPackage p = ps.pkg;
-        if (p != null) {
-            PackageInfo packageInfo = null;
-            try {
-                packageInfo = generatePackageInfo(p, flags, 0, 0, state, userId);
-            } catch (Throwable ignored) {
-            }
-            return packageInfo;
-        }
-        return null;
-    }
+     public static PackageInfo generatePackageInfo(PPackageSettings ps, int flags, long firstInstallTime, long lastUpdateTime, BPackageUserState state, int userId) {
+         if (ps == null) {
+             return null;
+         }
+         BPackage p = ps.pkg;
+         if (p != null) {
+             PackageInfo packageInfo = null;
+             try {
+                 packageInfo = generatePackageInfo(p, flags, firstInstallTime, lastUpdateTime, state, userId);
+             } catch (Throwable ignored) {
+             }
+             return packageInfo;
+         }
+         return null;
+     }
 
     public static PackageInfo generatePackageInfo(BPackage p, int flags, long firstInstallTime, long lastUpdateTime, BPackageUserState state, int userId) {
         if (!checkUseInstalledOrHidden(flags, state, p.applicationInfo)) {

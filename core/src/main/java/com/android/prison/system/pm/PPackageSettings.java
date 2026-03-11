@@ -23,6 +23,10 @@ public class PPackageSettings implements Parcelable {
     public Map<Integer, BPackageUserState> userState = new HashMap<>();
     static final BPackageUserState DEFAULT_USER_STATE = new BPackageUserState();
 
+    // 记录首次安装时间和最后更新时间
+    public long firstInstallTime;
+    public long lastUpdateTime;
+
     public PPackageSettings() {
     }
 
@@ -121,6 +125,8 @@ public class PPackageSettings implements Parcelable {
             dest.writeValue(entry.getKey());
             dest.writeParcelable(entry.getValue(), flags);
         }
+        dest.writeLong(this.firstInstallTime);
+        dest.writeLong(this.lastUpdateTime);
     }
 
     protected PPackageSettings(Parcel in) {
@@ -134,6 +140,8 @@ public class PPackageSettings implements Parcelable {
             BPackageUserState value = in.readParcelable(BPackageUserState.class.getClassLoader());
             this.userState.put(key, value);
         }
+        this.firstInstallTime = in.readLong();
+        this.lastUpdateTime = in.readLong();
     }
 
     public static final Creator<PPackageSettings> CREATOR = new Creator<PPackageSettings>() {

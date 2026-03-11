@@ -279,7 +279,14 @@ public class PackageManagerService extends IPPackageManagerService.Stub implemen
             ps = mPackages.get(packageName);
         }
         if (ps != null) {
-            return PackageManagerCompat.generatePackageInfo(ps, flags, ps.readUserState(userId), userId);
+            return PackageManagerCompat.generatePackageInfo(
+                    ps,
+                    flags,
+                    ps.firstInstallTime,
+                    ps.lastUpdateTime,
+                    ps.readUserState(userId),
+                    userId
+            );
         }
         return null;
     }

@@ -49,10 +49,17 @@ import com.android.prison.utils.Logger;
         origSettings.pkg.applicationInfo = PackageManagerCompat.generateApplicationInfo(origSettings.pkg, 0, BPackageUserState.create(), 0);
         synchronized (mPackages) {
             pkgSettings = mPackages.get(name);
+            long now = System.currentTimeMillis();
             if (pkgSettings != null) {
                 origSettings.appId = pkgSettings.appId;
                 origSettings.userState = pkgSettings.userState;
+                // 保留首次安装时间，只更新最后更新时间
+                origSettings.firstInstallTime = pkgSettings.firstInstallTime;
+                origSettings.lastUpdateTime = now;
             } else {
+                // 首次安装：两个时间都为当前时间
+                origSettings.firstInstallTime = now;
+                origSettings.lastUpdateTime = now;
                 boolean b = registerAppIdLPw(origSettings);
                 if (!b) {
                     throw new RuntimeException("registerAppIdLPw err.");
