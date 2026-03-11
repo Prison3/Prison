@@ -14,7 +14,9 @@ import android.os.Build;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.android.prison.base.MethodHook;
 import com.android.prison.interfaces.android.app.BRActivityThread;
@@ -359,12 +361,60 @@ public class IPackageManagerProxy extends BinderInvocationStub {
         }
     }
 
+    private static final Map<String, String> INSTALLER_MAP = new HashMap<>();
+
+    static {
+        // 这里的 key 建议用小写，代表品牌/厂商关键字
+        INSTALLER_MAP.put("huawei", "com.huawei.appmarket");
+        INSTALLER_MAP.put("honor", "com.huawei.appmarket");
+
+        INSTALLER_MAP.put("xiaomi", "com.xiaomi.market");
+        INSTALLER_MAP.put("redmi", "com.xiaomi.market");
+        INSTALLER_MAP.put("poco", "com.xiaomi.market");
+
+        INSTALLER_MAP.put("oppo", "com.oppo.market");
+        INSTALLER_MAP.put("realme", "com.oppo.market");
+        INSTALLER_MAP.put("oneplus", "com.oppo.market");
+
+        INSTALLER_MAP.put("vivo", "com.bbk.appstore");
+        INSTALLER_MAP.put("iqoo", "com.bbk.appstore");
+
+        INSTALLER_MAP.put("samsung", "com.samsung.android.app.samsungapps");
+
+        INSTALLER_MAP.put("lenovo", "com.lenovo.leos.appstore");
+        INSTALLER_MAP.put("motorola", "com.lenovo.leos.appstore");
+    }
+
+    private static String getDefaultInstallerPackageName() {
+        String installer = "com.android.vending";
+        try {
+            String manufacturer = android.os.Build.MANUFACTURER;
+            String brand = android.os.Build.BRAND;
+            String source = (manufacturer != null && !manufacturer.isEmpty())
+                    ? manufacturer
+                    : brand;
+
+            if (source != null) {
+                String lower = source.toLowerCase();
+                for (Map.Entry<String, String> entry : INSTALLER_MAP.entrySet()) {
+                    if (lower.contains(entry.getKey())) {
+                        installer = entry.getValue();
+                        break;
+                    }
+                }
+            }
+        } catch (Throwable ignored) {
+            // ignore and fallback to default
+            Logger.e(TAG, "getDefaultInstallerPackageName: " + ignored.getMessage());
+        }
+        return installer;
+    }
+
     @ProxyMethod("getInstallerPackageName")
     public static class GetInstallerPackageName extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            // fake google play
-            return "com.android.vending";
+            return getDefaultInstallerPackageName();
         }
     }
 
