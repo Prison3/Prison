@@ -307,7 +307,7 @@ class MainActivity : LoadingActivity() {
             when (item.itemId) {
                 R.id.main_git -> {
                     val intent =
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ALEX5402/NewPrison"))
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Prison3/Prison"))
                     startActivity(intent)
                 }
 
@@ -317,7 +317,7 @@ class MainActivity : LoadingActivity() {
 
                 R.id.main_tg -> {
                     val intent =
-                        Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/newprisona"))
+                        Intent(Intent.ACTION_VIEW, Uri.parse("https://t.me/Prison7"))
                     startActivity(intent)
                 }
 
