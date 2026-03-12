@@ -36,7 +36,7 @@ android {
 
         splits {
             abi {
-                enable true
+                enable false  // 关闭可避免 packageDebug 时 Failed to create apk；需要分架构包时改回 true
                 reset()
                 //noinspection ChromeOsAbiSupport
                 include 'armeabi-v7a', "arm64-v8a"
