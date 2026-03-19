@@ -14,6 +14,8 @@ import com.android.prison.base.ProxyMethod;
 import com.android.prison.utils.Logger;
 import com.android.prison.utils.MethodParameterUtils;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 
@@ -51,7 +53,7 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
                 methodName.startsWith("note") ||
                 methodName.startsWith("start")) {
             Logger.d(TAG, "AppOps invoke: Bypassing system for " + methodName + ", allowing operation");
-            return AppOpsManager.MODE_ALLOWED;
+            return buildAllowedReturnValue(method, whoOrNull(), args);
         }
 
         // For finish operations, just return null without calling system
@@ -68,11 +70,11 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
         } catch (SecurityException e) {
             // Handle SecurityException for UID/package mismatches
             Logger.w(TAG, "AppOps invoke: SecurityException caught for " + methodName + ", allowing operation", e);
-            return AppOpsManager.MODE_ALLOWED;
+            return buildAllowedReturnValue(method, whoOrNull(), args);
         } catch (Exception e) {
             Logger.e(TAG, "AppOps invoke: Error in method " + methodName, e);
             // Return MODE_ALLOWED as fallback to prevent crashes
-            return AppOpsManager.MODE_ALLOWED;
+            return buildAllowedReturnValue(method, whoOrNull(), args);
         }
     }
 
@@ -85,7 +87,7 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
     public static class NoteProxyOperation extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            return AppOpsManager.MODE_ALLOWED;
+            return buildAllowedReturnValue(method, who, args);
         }
     }
 
@@ -245,6 +247,102 @@ public class IAppOpsManagerProxy extends BinderInvocationStub {
             java.lang.reflect.Method m = AppOpsManager.class.getMethod("opToPublicName", int.class);
             Object name = m.invoke(null, op);
             return name != null ? name.toString() : null;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private Object whoOrNull() {
+        try {
+            return getWho();
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static Object buildAllowedReturnValue(Method method, Object who, Object[] args) throws Throwable {
+        Class<?> rt = method.getReturnType();
+        if (rt == void.class) return null;
+        if (rt == int.class || rt == Integer.class) return AppOpsManager.MODE_ALLOWED;
+        if (rt == boolean.class || rt == Boolean.class) return true;
+
+        // Android 14+ AppOps note* can return android.app.SyncNotedAppOp (not an int).
+        if ("android.app.SyncNotedAppOp".equals(rt.getName())) {
+            // Prefer returning a correctly-typed object from framework to satisfy callers.
+            Object original = null;
+            if (who != null) {
+                try {
+                    original = method.invoke(who, args);
+                } catch (Throwable ignored) {
+                    original = null;
+                }
+            }
+            Object allowed = (original != null) ? tryForceAllowedSyncNotedAppOp(original) : null;
+            if (allowed != null) return allowed;
+            return createAllowedSyncNotedAppOpFallback();
+        }
+
+        // Safe-ish default for reference return types when we can't forge a meaningful value.
+        return null;
+    }
+
+    private static Object tryForceAllowedSyncNotedAppOp(Object syncNotedAppOp) {
+        try {
+            // Try common field names across Android releases.
+            if (setIntFieldIfPresent(syncNotedAppOp, "mOpMode", AppOpsManager.MODE_ALLOWED)) return syncNotedAppOp;
+            if (setIntFieldIfPresent(syncNotedAppOp, "mMode", AppOpsManager.MODE_ALLOWED)) return syncNotedAppOp;
+            if (setIntFieldIfPresent(syncNotedAppOp, "opMode", AppOpsManager.MODE_ALLOWED)) return syncNotedAppOp;
+            if (setIntFieldIfPresent(syncNotedAppOp, "mode", AppOpsManager.MODE_ALLOWED)) return syncNotedAppOp;
+            return syncNotedAppOp;
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static boolean setIntFieldIfPresent(Object obj, String fieldName, int value) {
+        try {
+            Field f = obj.getClass().getDeclaredField(fieldName);
+            f.setAccessible(true);
+            f.setInt(obj, value);
+            return true;
+        } catch (Throwable ignored) {
+            return false;
+        }
+    }
+
+    private static Object createAllowedSyncNotedAppOpFallback() {
+        try {
+            Class<?> cls = Class.forName("android.app.SyncNotedAppOp");
+            // Try to instantiate with the "best effort" constructor:
+            // we fill all ints with MODE_ALLOWED for the first int, others 0; objects null.
+            Constructor<?>[] ctors = cls.getDeclaredConstructors();
+            if (ctors == null || ctors.length == 0) return null;
+            Constructor<?> c = ctors[0];
+            c.setAccessible(true);
+            Class<?>[] pts = c.getParameterTypes();
+            Object[] params = new Object[pts.length];
+            boolean firstIntSet = false;
+            for (int i = 0; i < pts.length; i++) {
+                Class<?> p = pts[i];
+                if (p == int.class || p == Integer.class) {
+                    if (!firstIntSet) {
+                        params[i] = AppOpsManager.MODE_ALLOWED;
+                        firstIntSet = true;
+                    } else {
+                        params[i] = 0;
+                    }
+                } else if (p == long.class || p == Long.class) {
+                    params[i] = 0L;
+                } else if (p == boolean.class || p == Boolean.class) {
+                    params[i] = false;
+                } else {
+                    params[i] = null;
+                }
+            }
+            Object obj = c.newInstance(params);
+            // Best-effort ensure mode becomes allowed if field exists.
+            tryForceAllowedSyncNotedAppOp(obj);
+            return obj;
         } catch (Throwable ignored) {
             return null;
         }
