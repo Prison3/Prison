@@ -46,6 +46,8 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
 //                MethodParameterUtils.replaceFirstAppPkg(args);
 //                return method.invoke(who, args);
+            Object original = method.invoke(who, args);
+            if (original == null) return null;
             return Md5Utils.md5(PrisonCore.getPackageName());
         }
     }
@@ -56,6 +58,8 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
 //                MethodParameterUtils.replaceFirstAppPkg(args);
 //                return method.invoke(who, args);
+            Object original = method.invoke(who, args);
+            if (original == null) return null;
             return Md5Utils.md5(PrisonCore.getPackageName());
         }
     }
@@ -66,6 +70,8 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
 //                MethodParameterUtils.replaceFirstAppPkg(args);
 //                return method.invoke(who, args);
+            Object original = method.invoke(who, args);
+            if (original == null) return null;
             return Md5Utils.md5(PrisonCore.getPackageName());
         }
     }
@@ -91,7 +97,9 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetSubscriberId extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            return "getSubscriberId";
+            Object original = method.invoke(who, args);
+            if (original == null) return null;
+            return Md5Utils.md5(PrisonCore.getPackageName());
         }
     }
 
@@ -99,6 +107,8 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetDeviceIdWithFeature extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
+            Object original = method.invoke(who, args);
+            if (original == null) return null;
             return Md5Utils.md5(PrisonCore.getPackageName());
         }
     }
