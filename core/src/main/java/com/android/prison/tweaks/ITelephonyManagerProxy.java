@@ -2,20 +2,19 @@ package com.android.prison.tweaks;
 
 import android.content.Context;
 import android.os.IBinder;
-import android.util.Log;
-
 import java.lang.reflect.Method;
 import java.util.List;
 
 import com.android.prison.base.MethodHook;
+import com.android.prison.core.PrisonCore;
 import com.android.prison.interfaces.android.os.BRServiceManager;
 import com.android.prison.interfaces.com.android.internal.telephony.BRITelephonyStub;
-import com.android.prison.core.PrisonCore;
 import com.android.prison.base.PActivityThread;
 import com.android.prison.entity.PCell;
 import com.android.prison.manager.PLocationManager;
 import com.android.prison.base.BinderInvocationStub;
 import com.android.prison.base.ProxyMethod;
+import com.android.prison.utils.Logger;
 import com.android.prison.utils.Md5Utils;
 
 public class ITelephonyManagerProxy extends BinderInvocationStub {
@@ -92,7 +91,7 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetSubscriberId extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            return Md5Utils.md5(PrisonCore.getPackageName());
+            return "getSubscriberId";
         }
     }
 
@@ -108,7 +107,7 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetCellLocation extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            Log.d(TAG, "getCellLocation");
+            Logger.d(TAG, "getCellLocation");
             if (PLocationManager.isFakeLocationEnable()) {
                 PCell cell = PLocationManager.get().getCell(PActivityThread.getUserId(), PActivityThread.getAppPackageName());
                 if (cell != null) {
@@ -141,7 +140,7 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetNetworkOperator extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            Log.d(TAG, "getNetworkOperator");
+            Logger.d(TAG, "getNetworkOperator");
             return method.invoke(who, args);
         }
     }
@@ -162,7 +161,7 @@ public class ITelephonyManagerProxy extends BinderInvocationStub {
     public static class GetNeighboringCellInfo extends MethodHook {
         @Override
         protected Object hook(Object who, Method method, Object[] args) throws Throwable {
-            Log.d(TAG, "getNeighboringCellInfo");
+            Logger.d(TAG, "getNeighboringCellInfo");
             if (PLocationManager.isFakeLocationEnable()) {
                 List<PCell> cell = PLocationManager.get().getNeighboringCell(PActivityThread.getUserId(), PActivityThread.getAppPackageName());
                 // TODO Transfer PCell to CdmaCellLocation/GsmCellLocation

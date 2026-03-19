@@ -296,7 +296,7 @@ public class IActivityManagerProxy extends ClassInvocationStub {
                     }
                 }
 
-                //Log.d(TAG,"Intent:" + intent + "-->" + "proxyIntent:" + proxyIntent + ",flag:" + intent.getFlags() + "proxyFlag:" + proxyIntent.getFlags());
+                //Logger.d(TAG,"Intent:" + intent + "-->" + "proxyIntent:" + proxyIntent + ",flag:" + intent.getFlags() + "proxyFlag:" + proxyIntent.getFlags());
                 if (proxyIntent != null && proxyIntent.getComponent() != null && 
                     proxyIntent.getComponent().getPackageName().equals(PrisonCore.getPackageName())){
                     int flagsIndex = getFlagsIndex(args);

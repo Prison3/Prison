@@ -2,8 +2,7 @@ package com.android.prison.proxy;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import androidx.annotation.Nullable;
 
 import com.android.prison.base.PActivityThread;
@@ -17,7 +16,7 @@ public class ProxyActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "onCreate");
+        Logger.d(TAG, "onCreate");
         finish();
 
         InjectorManager.get().checkEnvironment(HCallbackProxy.class);

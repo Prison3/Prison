@@ -3,8 +3,7 @@ package com.android.prison.tweaks;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.IInterface;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Objects;
@@ -43,7 +42,7 @@ public class ILocationManagerProxy extends BinderInvocationStub {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-//        Log.d(TAG, "call: " + method.getName());
+//        Logger.d(TAG, "call: " + method.getName());
         MethodParameterUtils.replaceFirstAppPkg(args);
         
         // Check if this is a Google Play Services process trying to access location
@@ -53,7 +52,7 @@ public class ILocationManagerProxy extends BinderInvocationStub {
             if (method.getName().equals("getLastLocation") || 
                 method.getName().equals("getLastKnownLocation") ||
                 method.getName().equals("requestLocationUpdates")) {
-                Log.w(TAG, "Blocking location request from Google Play Services to prevent crash");
+                Logger.w(TAG, "Blocking location request from Google Play Services to prevent crash");
                 return null;
             }
         }
@@ -85,7 +84,7 @@ public class ILocationManagerProxy extends BinderInvocationStub {
                 return method.invoke(who, args);
             } catch (Exception e) {
                 if (e.getCause() instanceof SecurityException) {
-                    Log.w(TAG, "Location permission denied, returning null for getLastLocation");
+                    Logger.w(TAG, "Location permission denied, returning null for getLastLocation");
                     return null;
                 }
                 throw e;
@@ -107,7 +106,7 @@ public class ILocationManagerProxy extends BinderInvocationStub {
                 return method.invoke(who, args);
             } catch (Exception e) {
                 if (e.getCause() instanceof SecurityException) {
-                    Log.w(TAG, "Location permission denied, returning null for getLastKnownLocation");
+                    Logger.w(TAG, "Location permission denied, returning null for getLastKnownLocation");
                     return null;
                 }
                 throw e;
@@ -133,7 +132,7 @@ public class ILocationManagerProxy extends BinderInvocationStub {
                 return method.invoke(who, args);
             } catch (Exception e) {
                 if (e.getCause() instanceof SecurityException) {
-                    Log.w(TAG, "Location permission denied for requestLocationUpdates, returning 0");
+                    Logger.w(TAG, "Location permission denied for requestLocationUpdates, returning 0");
                     return 0;
                 }
                 throw e;

@@ -27,7 +27,7 @@ public final class Logger {
      * Unified print method that all logging methods delegate to
      */
     private static void print(int priority, String tag, String msg) {
-        Log.println(priority, "Prison", "[" + tag + "] " + msg);
+        Log.println(priority, "Prison" + "[" + tag + "] ", msg);
     }
 
     public static void v(String tag, String msg) {

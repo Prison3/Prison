@@ -50,7 +50,7 @@ public class OsStub extends ClassInvocationStub {
                     String orig = (String) args[i];
                     args[i] = IOCore.get().redirectPath(orig);
 //                    if (!ObjectsCompat.equals(orig, args[i])) {
-//                        Log.d(TAG, "redirectPath: " + orig + "  => " + args[i]);
+//                        Logger.d(TAG, "redirectPath: " + orig + "  => " + args[i]);
 //                    }
                 }
             }

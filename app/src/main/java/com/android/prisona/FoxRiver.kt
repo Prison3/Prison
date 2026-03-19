@@ -102,7 +102,7 @@ class FoxRiver : Application() {
                 // Change to 'true' if you want to block launch until permission is granted
                 return false
             } catch (e: Exception) {
-                Log.e(TAG, "Error in onStoragePermissionNeeded: ${e.message}")
+                Logger.e(TAG, "Error in onStoragePermissionNeeded: ${e.message}")
                 return false
             }
         }

@@ -1,8 +1,7 @@
 package com.android.prison.tweaks;
 
 import android.os.IBinder;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Method;
 
 import com.android.prison.interfaces.android.os.BRServiceManager;
@@ -53,10 +52,10 @@ public class StubHelper {
                 IBinder binder = BRServiceManager.get().getService(serviceName);
                 return asInterfaceMethod.invoke(stub, binder);
             } else {
-                Log.w(TAG, "Could not find asInterface method in " + stubClassName);
+                Logger.w(TAG, "Could not find asInterface method in " + stubClassName);
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to use generated stub class: " + stubClassName, e);
+            Logger.w(TAG, "Failed to use generated stub class: " + stubClassName, e);
         }
         
         // Fallback: use reflection to get the real service
@@ -66,7 +65,7 @@ public class StubHelper {
             Method asInterfaceMethod = stubClass.getMethod("asInterface", IBinder.class);
             return asInterfaceMethod.invoke(null, binder);
         } catch (Exception ex) {
-            Log.e(TAG, "Failed to get service interface for: " + serviceName, ex);
+            Logger.e(TAG, "Failed to get service interface for: " + serviceName, ex);
             return null;
         }
     }
@@ -111,10 +110,10 @@ public class StubHelper {
                 IBinder serviceBinder = binder != null ? binder : BRServiceManager.get().getService(serviceName);
                 return asInterfaceMethod.invoke(stub, serviceBinder);
             } else {
-                Log.w(TAG, "Could not find asInterface method in " + stubClassName);
+                Logger.w(TAG, "Could not find asInterface method in " + stubClassName);
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to use generated stub class: " + stubClassName, e);
+            Logger.w(TAG, "Failed to use generated stub class: " + stubClassName, e);
         }
         
         // Fallback: use reflection to get the real service
@@ -124,7 +123,7 @@ public class StubHelper {
             Method asInterfaceMethod = stubClass.getMethod("asInterface", IBinder.class);
             return asInterfaceMethod.invoke(null, serviceBinder);
         } catch (Exception ex) {
-            Log.e(TAG, "Failed to get service interface for: " + serviceName, ex);
+            Logger.e(TAG, "Failed to get service interface for: " + serviceName, ex);
             return null;
         }
     }

@@ -2,8 +2,7 @@ package com.android.prison.manager;
 
 import android.os.IBinder;
 import android.os.IInterface;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,7 +35,7 @@ public abstract class Manager<Service extends IInterface> {
         if (mServiceCreationFailed.get()) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - mLastRetryTime < RETRY_TIMEOUT_MS) {
-                Log.d(TAG, "Skipping service creation for " + getServiceName() + " due to recent failure");
+                Logger.d(TAG, "Skipping service creation for " + getServiceName() + " due to recent failure");
                 return null;
             }
             // Reset the flag after timeout
@@ -50,27 +49,27 @@ public abstract class Manager<Service extends IInterface> {
         // Rate limiting: don't create services too frequently
         long currentTime = System.currentTimeMillis();
         if (currentTime - mLastServiceCreationTime < MIN_SERVICE_CREATION_INTERVAL_MS) {
-            Log.d(TAG, "Rate limiting service creation for " + getServiceName());
+            Logger.d(TAG, "Rate limiting service creation for " + getServiceName());
             return mService; // Return existing service (might be null)
         }
 
         try {
             IBinder binder = SystemServer.get().getService(getServiceName());
             if (binder == null) {
-                Log.w(TAG, "Failed to get binder for service: " + getServiceName());
+                Logger.w(TAG, "Failed to get binder for service: " + getServiceName());
                 markServiceCreationFailed();
                 return null;
             }
             
             // Check if binder is alive before proceeding
             if (!binder.isBinderAlive()) {
-                Log.w(TAG, "Binder is not alive for service: " + getServiceName());
+                Logger.w(TAG, "Binder is not alive for service: " + getServiceName());
                 markServiceCreationFailed();
                 return null;
             }
             
             String stubClassName = getTClass().getName() + "$Stub";
-            Log.d(TAG, "Creating service for: " + stubClassName);
+            Logger.d(TAG, "Creating service for: " + stubClassName);
             
             mService = Reflector.on(stubClassName).method("asInterface", IBinder.class)
                     .call(binder);
@@ -79,13 +78,13 @@ public abstract class Manager<Service extends IInterface> {
                 // Additional health check
                 try {
                     if (!mService.asBinder().isBinderAlive()) {
-                        Log.w(TAG, "Service binder is not alive after creation: " + getServiceName());
+                        Logger.w(TAG, "Service binder is not alive after creation: " + getServiceName());
                         mService = null;
                         markServiceCreationFailed();
                         return null;
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Error checking service binder health: " + getServiceName(), e);
+                    Logger.w(TAG, "Error checking service binder health: " + getServiceName(), e);
                     mService = null;
                     markServiceCreationFailed();
                     return null;
@@ -101,28 +100,28 @@ public abstract class Manager<Service extends IInterface> {
                                     serviceRef.asBinder().unlinkToDeath(this, 0);
                                 }
                             } catch (Exception e) {
-                                Log.w(TAG, "Error unlinking death recipient for " + getServiceName(), e);
+                                Logger.w(TAG, "Error unlinking death recipient for " + getServiceName(), e);
                             }
                             mService = null;
-                            Log.w(TAG, "Service died: " + getServiceName());
+                            Logger.w(TAG, "Service died: " + getServiceName());
                         }
                     }, 0);
                 } catch (Exception e) {
-                    Log.w(TAG, "Error linking death recipient for " + getServiceName(), e);
+                    Logger.w(TAG, "Error linking death recipient for " + getServiceName(), e);
                     // Continue anyway, the service might still work
                 }
                 
-                Log.d(TAG, "Successfully created service: " + getServiceName());
+                Logger.d(TAG, "Successfully created service: " + getServiceName());
                 mServiceCreationFailed.set(false); // Reset failure flag on success
                 mLastServiceCreationTime = currentTime; // Update creation time
             } else {
-                Log.w(TAG, "Failed to create service instance for: " + getServiceName());
+                Logger.w(TAG, "Failed to create service instance for: " + getServiceName());
                 markServiceCreationFailed();
             }
             
             return mService;
         } catch (Throwable e) {
-            Log.e(TAG, "Error creating service for " + getServiceName(), e);
+            Logger.e(TAG, "Error creating service for " + getServiceName(), e);
             markServiceCreationFailed();
             return null;
         }
@@ -138,7 +137,7 @@ public abstract class Manager<Service extends IInterface> {
      */
     public void clearServiceCache() {
         mService = null;
-        Log.d(TAG, "Cleared service cache for " + getServiceName());
+        Logger.d(TAG, "Cleared service cache for " + getServiceName());
     }
     
     /**
@@ -151,7 +150,7 @@ public abstract class Manager<Service extends IInterface> {
         try {
             return mService.asBinder().pingBinder() && mService.asBinder().isBinderAlive();
         } catch (Exception e) {
-            Log.w(TAG, "Service health check failed for " + getServiceName(), e);
+            Logger.w(TAG, "Service health check failed for " + getServiceName(), e);
             return false;
         }
     }

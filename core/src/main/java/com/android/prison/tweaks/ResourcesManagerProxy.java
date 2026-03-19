@@ -1,7 +1,5 @@
 package com.android.prison.tweaks;
-
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Method;
 
 import com.android.prison.base.ClassInvocationStub;
@@ -20,7 +18,7 @@ public class ResourcesManagerProxy extends ClassInvocationStub {
         try {
             Class.forName(RESOURCES_MANAGER_CLASS);
         } catch (ClassNotFoundException e) {
-            Log.w(TAG, "ResourcesManager class not found: " + e.getMessage());
+            Logger.w(TAG, "ResourcesManager class not found: " + e.getMessage());
         }
     }
 
@@ -56,7 +54,7 @@ public class ResourcesManagerProxy extends ClassInvocationStub {
                                 path.contains(".frro") ||
                                 path.contains("systemui") ||
                                 path.contains("data@resource-cache@"))) {
-                Log.d(TAG, "Blocking problematic ApkAssets load: " + path);
+                Logger.d(TAG, "Blocking problematic ApkAssets load: " + path);
                 // Return null or throw exception to prevent loading
                 return null;
             }
@@ -78,7 +76,7 @@ public class ResourcesManagerProxy extends ClassInvocationStub {
                                 path.contains(".frro") ||
                                 path.contains("systemui") ||
                                 path.contains("data@resource-cache@"))) {
-                Log.d(TAG, "Blocking problematic overlay path: " + path);
+                Logger.d(TAG, "Blocking problematic overlay path: " + path);
                 // Return null to prevent loading
                 return null;
             }

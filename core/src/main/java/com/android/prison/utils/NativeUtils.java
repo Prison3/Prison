@@ -1,8 +1,7 @@
 package com.android.prison.utils;
 
 import android.os.Build;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,13 +29,13 @@ public class NativeUtils {
 
             findAndCopyNativeLib(zipfile, "armeabi", nativeLibDir);
         } finally {
-            Log.d(TAG, "Done! +" + (System.currentTimeMillis() - startTime) + "ms");
+            Logger.d(TAG, "Done! +" + (System.currentTimeMillis() - startTime) + "ms");
         }
     }
 
 
     private static boolean findAndCopyNativeLib(ZipFile zipfile, String cpuArch, File nativeLibDir) throws Exception {
-        Log.d(TAG, "Try to copy plugin's cup arch: " + cpuArch);
+        Logger.d(TAG, "Try to copy plugin's cup arch: " + cpuArch);
         boolean findLib = false;
         boolean findSo = false;
         byte buffer[] = null;
@@ -57,12 +56,12 @@ public class NativeUtils {
 
             if (buffer == null) {
                 findSo = true;
-                Log.d(TAG, "Found plugin's cup arch dir: " + cpuArch);
+                Logger.d(TAG, "Found plugin's cup arch dir: " + cpuArch);
                 buffer = new byte[8192];
             }
 
             String libName = entryName.substring(entryName.lastIndexOf('/') + 1);
-            Log.d(TAG, "verify so " + libName);
+            Logger.d(TAG, "verify so " + libName);
 //            File abiDir = new File(nativeLibDir, cpuArch);
 //            if (!abiDir.exists()) {
 //                abiDir.mkdirs();
@@ -70,16 +69,16 @@ public class NativeUtils {
 
             File libFile = new File(nativeLibDir, libName);
             if (libFile.exists() && libFile.length() == entry.getSize()) {
-                Log.d(TAG, libName + " skip copy");
+                Logger.d(TAG, libName + " skip copy");
                 continue;
             }
             FileOutputStream fos = new FileOutputStream(libFile);
-            Log.d(TAG, "copy so " + entry.getName() + " of " + cpuArch);
+            Logger.d(TAG, "copy so " + entry.getName() + " of " + cpuArch);
             copySo(buffer, zipfile.getInputStream(entry), fos);
         }
 
         if (!findLib) {
-            Log.d(TAG, "Fast skip all!");
+            Logger.d(TAG, "Fast skip all!");
             return true;
         }
 

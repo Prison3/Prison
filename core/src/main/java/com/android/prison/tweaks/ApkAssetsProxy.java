@@ -1,7 +1,5 @@
 package com.android.prison.tweaks;
-
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Method;
 
 import com.android.prison.base.ClassInvocationStub;
@@ -20,7 +18,7 @@ public class ApkAssetsProxy extends ClassInvocationStub {
         try {
             Class.forName(APK_ASSETS_CLASS);
         } catch (ClassNotFoundException e) {
-            Log.w(TAG, "ApkAssets class not found: " + e.getMessage());
+            Logger.w(TAG, "ApkAssets class not found: " + e.getMessage());
         }
     }
 
@@ -56,7 +54,7 @@ public class ApkAssetsProxy extends ClassInvocationStub {
                                 path.contains(".frro") ||
                                 path.contains("systemui") ||
                                 path.contains("data@resource-cache@"))) {
-                Log.d(TAG, "Blocking problematic overlay path: " + path);
+                Logger.d(TAG, "Blocking problematic overlay path: " + path);
                 throw new RuntimeException("Blocked problematic overlay path: " + path);
             }
             
@@ -77,7 +75,7 @@ public class ApkAssetsProxy extends ClassInvocationStub {
                                 path.contains(".frro") ||
                                 path.contains("systemui") ||
                                 path.contains("data@resource-cache@"))) {
-                Log.d(TAG, "Blocking problematic native load path: " + path);
+                Logger.d(TAG, "Blocking problematic native load path: " + path);
                 throw new RuntimeException("Blocked problematic native load path: " + path);
             }
             

@@ -8,8 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Process;
 import android.os.RemoteException;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -146,7 +145,7 @@ public class ProcessManagerService implements ISystemService {
     }
 
     private boolean initAppProcessL(ProcessRecord record) {
-        Log.d(TAG, "initProcess: " + record.processName);
+        Logger.d(TAG, "initProcess: " + record.processName);
         AppConfig appConfig = record.getClientConfig();
         Bundle bundle = new Bundle();
         bundle.putParcelable(AppConfig.KEY, appConfig);
@@ -171,7 +170,7 @@ public class ProcessManagerService implements ISystemService {
             appThread.linkToDeath(new IBinder.DeathRecipient() {
                 @Override
                 public void binderDied() {
-                    Log.d(TAG, "App Died: " + app.processName);
+                    Logger.d(TAG, "App Died: " + app.processName);
                     appThread.unlinkToDeath(this, 0);
                     onProcessDie(app);
                 }

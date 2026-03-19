@@ -8,8 +8,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Field;
 
 import com.android.prison.interfaces.android.app.BRActivity;
@@ -93,7 +92,7 @@ public final class AppInstrumentation extends BaseInstrumentationDelegate implem
     }
 
     private void checkActivity(Activity activity) {
-        Log.d(TAG, "callActivityOnCreate: " + activity.getClass().getName());
+        Logger.d(TAG, "callActivityOnCreate: " + activity.getClass().getName());
         HackAppUtils.enableQQLogOutput(activity.getPackageName(), activity.getClassLoader());
         checkHCallback();
         InjectorManager.get().checkEnvironment(IActivityClientProxy.class);

@@ -1,7 +1,5 @@
 package com.android.prison.utils;
-
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -58,7 +56,7 @@ public class JarUtils {
                 
                 // Log progress every 100KB
                 if (totalBytes % 102400 == 0 && System.currentTimeMillis() - lastLogTime > 1000) {
-                    Log.d(TAG, "Copying " + fileName + ": " + (totalBytes / 1024) + "KB");
+                    Logger.d(TAG, "Copying " + fileName + ": " + (totalBytes / 1024) + "KB");
                     lastLogTime = System.currentTimeMillis();
                 }
             }
@@ -72,13 +70,13 @@ public class JarUtils {
                 throw new IOException("Failed to move temporary file to target: " + target);
             }
             
-            Log.d(TAG, "Successfully copied " + fileName + " (" + totalBytes + " bytes)");
+            Logger.d(TAG, "Successfully copied " + fileName + " (" + totalBytes + " bytes)");
             
         } catch (IOException e) {
             // Clean up on failure
             if (tempFile != null && tempFile.exists()) {
                 if (!tempFile.delete()) {
-                    Log.w(TAG, "Failed to delete temporary file: " + tempFile);
+                    Logger.w(TAG, "Failed to delete temporary file: " + tempFile);
                 }
             }
             throw e;
@@ -87,7 +85,7 @@ public class JarUtils {
                 try {
                     output.close();
                 } catch (IOException e) {
-                    Log.w(TAG, "Failed to close output stream", e);
+                    Logger.w(TAG, "Failed to close output stream", e);
                 }
             }
         }
@@ -124,7 +122,7 @@ public class JarUtils {
             return hexString.toString();
             
         } catch (NoSuchAlgorithmException | IOException e) {
-            Log.w(TAG, "Failed to calculate file hash", e);
+            Logger.w(TAG, "Failed to calculate file hash", e);
             return null;
         }
     }
@@ -158,7 +156,7 @@ public class JarUtils {
             return entryCount > 0;
             
         } catch (IOException e) {
-            Log.w(TAG, "JAR file verification failed: " + jarFile.getName(), e);
+            Logger.w(TAG, "JAR file verification failed: " + jarFile.getName(), e);
             return false;
         }
     }
@@ -213,7 +211,7 @@ public class JarUtils {
             }
         }
         
-        Log.w(TAG, "Failed to delete file after " + retryCount + " attempts: " + file);
+        Logger.w(TAG, "Failed to delete file after " + retryCount + " attempts: " + file);
         return false;
     }
     

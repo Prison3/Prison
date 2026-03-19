@@ -10,8 +10,7 @@ import android.content.pm.ServiceInfo;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class ActiveServices {
                 return 0;
             }
             if (runningServiceRecord.mBindCount.get() > 0) {
-                Log.d(TAG, "There are also connections");
+                Logger.d(TAG, "There are also connections");
                 return 0;
             }
             runningServiceRecord.mStartId.set(0);

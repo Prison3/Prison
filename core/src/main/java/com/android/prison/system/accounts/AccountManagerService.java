@@ -177,7 +177,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
     @Override
     public String getPassword(Account account, int userId) throws RemoteException {
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "getPassword: " + account
+            Logger.v(TAG, "getPassword: " + account
                     + ", caller's uid " + Binder.getCallingUid()
                     + ", pid " + Binder.getCallingPid());
         }
@@ -191,7 +191,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
             String msg = String.format("getUserData( account: %s, key: %s, callerUid: %s, pid: %s",
                     account, key, Binder.getCallingUid(), Binder.getCallingPid());
-            Log.v(TAG, msg);
+            Logger.v(TAG, msg);
         }
         Objects.requireNonNull(account, "account cannot be null");
         Objects.requireNonNull(key, "key cannot be null");
@@ -359,7 +359,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
     public boolean removeAccountExplicitly(Account account, int userId) throws RemoteException {
         final int callingUid = Binder.getCallingUid();
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, "removeAccountExplicitly: " + account
+            Logger.v(TAG, "removeAccountExplicitly: " + account
                     + ", caller's uid " + callingUid
                     + ", pid " + Binder.getCallingPid());
         }
@@ -368,7 +368,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
              * Null accounts should result in returning false, as per
              * AccountManage.addAccountExplicitly(...) java doc.
              */
-            Log.e(TAG, "account is null");
+            Logger.e(TAG, "account is null");
             return false;
         }
         BUserAccounts accounts = getUserAccounts(userId);
@@ -583,7 +583,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                     callerPkg);
             if (token != null) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "getAuthToken: cache hit ofr custom token authenticator.");
+                    Logger.v(TAG, "getAuthToken: cache hit ofr custom token authenticator.");
                 }
                 Bundle result = new Bundle();
                 result.putString(AccountManager.KEY_AUTHTOKEN, token);
@@ -1249,7 +1249,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                 IAccountManagerResponse response = getResponseAndClose();
                 if (response != null) {
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
+                        Logger.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
                                 + response);
                     }
                     try {
@@ -1312,7 +1312,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                 // There is no need to send back a result or error in this case since
                 // that already happened when mAuthenticator was cleared.
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "checkAccount: aborting session since we are no longer"
+                    Logger.v(TAG, "checkAccount: aborting session since we are no longer"
                             + " connected to the authenticator, " + toDebugString());
                 }
                 return;
@@ -1347,7 +1347,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                         accounts[i] = mAccountsWithFeatures.get(i);
                     }
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
+                        Logger.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
                                 + response);
                     }
                     Bundle result = new Bundle();
@@ -1356,7 +1356,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                 } catch (RemoteException e) {
                     // if the caller is dead then there is no one to care about remote exceptions
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "failure while notifying response", e);
+                        Logger.v(TAG, "failure while notifying response", e);
                     }
                 }
             }
@@ -1581,10 +1581,10 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
 
         void bind() {
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "initiating bind to authenticator type " + mAccountType);
+                Logger.v(TAG, "initiating bind to authenticator type " + mAccountType);
             }
             if (!bindToAuthenticator(mAccountType)) {
-                Log.d(TAG, "bind attempt failed for " + toDebugString());
+                Logger.d(TAG, "bind attempt failed for " + toDebugString());
                 onError(AccountManager.ERROR_CODE_REMOTE_EXCEPTION, "bind failure");
             }
         }
@@ -1621,7 +1621,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                             "disconnected");
                 } catch (RemoteException e) {
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "Session.onServiceDisconnected: "
+                        Logger.v(TAG, "Session.onServiceDisconnected: "
                                 + "caught RemoteException while responding", e);
                     }
                 }
@@ -1638,7 +1638,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                             "timeout");
                 } catch (RemoteException e) {
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "Session.onTimedOut: caught RemoteException while responding",
+                        Logger.v(TAG, "Session.onTimedOut: caught RemoteException while responding",
                                 e);
                     }
                 }
@@ -1708,7 +1708,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                 try {
                     if (result == null) {
                         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                            Log.v(TAG, getClass().getSimpleName()
+                            Logger.v(TAG, getClass().getSimpleName()
                                     + " calling onError() on response " + response);
                         }
                         response.onError(AccountManager.ERROR_CODE_INVALID_RESPONSE,
@@ -1718,7 +1718,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                             result.remove(AccountManager.KEY_AUTHTOKEN);
                         }
                         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                            Log.v(TAG, getClass().getSimpleName()
+                            Logger.v(TAG, getClass().getSimpleName()
                                     + " calling onResult() on response " + response);
                         }
                         if ((result.getInt(AccountManager.KEY_ERROR_CODE, -1) > 0) &&
@@ -1733,7 +1733,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
                 } catch (RemoteException e) {
                     // if the caller is dead then there is no one to care about remote exceptions
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "failure while notifying response", e);
+                        Logger.v(TAG, "failure while notifying response", e);
                     }
                 }
             }
@@ -1750,19 +1750,19 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
             IAccountManagerResponse response = getResponseAndClose();
             if (response != null) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, getClass().getSimpleName()
+                    Logger.v(TAG, getClass().getSimpleName()
                             + " calling onError() on response " + response);
                 }
                 try {
                     response.onError(errorCode, errorMessage);
                 } catch (RemoteException e) {
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "Session.onError: caught RemoteException while responding", e);
+                        Logger.v(TAG, "Session.onError: caught RemoteException while responding", e);
                     }
                 }
             } else {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "Session.onError: already closed");
+                    Logger.v(TAG, "Session.onError: already closed");
                 }
             }
         }
@@ -1775,7 +1775,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
             AuthenticatorInfo authenticatorInfo = mAuthenticatorCache.authenticators.get(authenticatorType);
             if (authenticatorInfo == null) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "there is no authenticator for " + authenticatorType
+                    Logger.v(TAG, "there is no authenticator for " + authenticatorType
                             + ", bailing out");
                 }
                 return false;
@@ -1796,7 +1796,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
             intent.putExtra("_B_|_UserId", mAccounts.userId);
 
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "performing bindService to " + componentName);
+                Logger.v(TAG, "performing bindService to " + componentName);
             }
             int flags = Context.BIND_AUTO_CREATE;
 //            if (mAuthenticatorCache.getBindInstantServiceAllowed(mAccounts.userId)) {
@@ -1804,7 +1804,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
 //            }
             if (!mContext.bindService(intent, this, flags)) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "bindService to " + componentName + " failed");
+                    Logger.v(TAG, "bindService to " + componentName + " failed");
                 }
                 return false;
             }
@@ -1815,10 +1815,10 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
 
     private void onResult(IAccountManagerResponse response, Bundle result) {
         if (result == null) {
-            Log.e(TAG, "the result is unexpectedly null", new Exception());
+            Logger.e(TAG, "the result is unexpectedly null", new Exception());
         }
         if (Log.isLoggable(TAG, Log.VERBOSE)) {
-            Log.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
+            Logger.v(TAG, getClass().getSimpleName() + " calling onResult() on response "
                     + response);
         }
         try {
@@ -1827,7 +1827,7 @@ public class AccountManagerService extends IPAccountManagerService.Stub implemen
             // if the caller is dead then there is no one to care about remote
             // exceptions
             if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "failure while notifying response", e);
+                Logger.v(TAG, "failure while notifying response", e);
             }
         }
     }

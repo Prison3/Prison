@@ -8,8 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import androidx.core.app.NotificationCompat;
 
 import com.android.prison.core.PrisonCore;
@@ -34,7 +33,7 @@ public class DaemonService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "DaemonService onCreate");
+        Logger.d(TAG, "DaemonService onCreate");
         
         // Create notification channel for Android 8.0+
         if (BuildCompat.isOreo()) {
@@ -44,7 +43,7 @@ public class DaemonService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "DaemonService onStartCommand");
+        Logger.d(TAG, "DaemonService onStartCommand");
         
         try {
             // Start the inner service
@@ -54,16 +53,16 @@ public class DaemonService extends Service {
             // Start foreground service for Android 8.0+
             if (BuildCompat.isOreo()) {
                 if (!startForegroundService()) {
-                    Log.w(TAG, "Failed to start foreground service, falling back to regular service");
+                    Logger.w(TAG, "Failed to start foreground service, falling back to regular service");
                     return START_STICKY;
                 }
             }
             
-            Log.d(TAG, "DaemonService started successfully");
+            Logger.d(TAG, "DaemonService started successfully");
             return START_STICKY;
             
         } catch (Exception e) {
-            Log.e(TAG, "Error starting DaemonService: " + e.getMessage(), e);
+            Logger.e(TAG, "Error starting DaemonService: " + e.getMessage(), e);
             // Return START_STICKY to allow the system to restart the service
             return START_STICKY;
         }
@@ -71,7 +70,7 @@ public class DaemonService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "DaemonService onDestroy");
+        Logger.d(TAG, "DaemonService onDestroy");
         super.onDestroy();
     }
 
@@ -94,11 +93,11 @@ public class DaemonService extends Service {
                 NotificationManager notificationManager = getSystemService(NotificationManager.class);
                 if (notificationManager != null) {
                     notificationManager.createNotificationChannel(channel);
-                    Log.d(TAG, "Notification channel created successfully");
+                    Logger.d(TAG, "Notification channel created successfully");
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "Failed to create notification channel: " + e.getMessage(), e);
+            Logger.e(TAG, "Failed to create notification channel: " + e.getMessage(), e);
         }
     }
 
@@ -110,14 +109,14 @@ public class DaemonService extends Service {
             Notification notification = createNotification();
             if (notification != null) {
                 startForeground(NOTIFY_ID, notification);
-                Log.d(TAG, "Foreground service started successfully");
+                Logger.d(TAG, "Foreground service started successfully");
                 return true;
             } else {
-                Log.e(TAG, "Failed to create notification");
+                Logger.e(TAG, "Failed to create notification");
                 return false;
             }
         } catch (Exception e) {
-            Log.e(TAG, "Failed to start foreground service: " + e.getMessage(), e);
+            Logger.e(TAG, "Failed to start foreground service: " + e.getMessage(), e);
             return false;
         }
     }
@@ -137,7 +136,7 @@ public class DaemonService extends Service {
             
             return builder.build();
         } catch (Exception e) {
-            Log.e(TAG, "Failed to create notification: " + e.getMessage(), e);
+            Logger.e(TAG, "Failed to create notification: " + e.getMessage(), e);
             return null;
         }
     }
@@ -148,20 +147,20 @@ public class DaemonService extends Service {
     public static class DaemonInnerService extends Service {
         @Override
         public void onCreate() {
-            Log.i(TAG, "DaemonInnerService -> onCreate");
+            Logger.i(TAG, "DaemonInnerService -> onCreate");
             super.onCreate();
         }
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-            Log.i(TAG, "DaemonInnerService -> onStartCommand");
+            Logger.i(TAG, "DaemonInnerService -> onStartCommand");
             
             try {
                 // Cancel the notification from the main service
                 NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (nm != null) {
                     nm.cancel(NOTIFY_ID);
-                    Log.d(TAG, "Notification cancelled successfully");
+                    Logger.d(TAG, "Notification cancelled successfully");
                 }
                 
                 // Stop this inner service
@@ -169,7 +168,7 @@ public class DaemonService extends Service {
                 return START_NOT_STICKY;
                 
             } catch (Exception e) {
-                Log.e(TAG, "Error in DaemonInnerService: " + e.getMessage(), e);
+                Logger.e(TAG, "Error in DaemonInnerService: " + e.getMessage(), e);
                 stopSelf();
                 return START_NOT_STICKY;
             }
@@ -182,7 +181,7 @@ public class DaemonService extends Service {
 
         @Override
         public void onDestroy() {
-            Log.i(TAG, "DaemonInnerService -> onDestroy");
+            Logger.i(TAG, "DaemonInnerService -> onDestroy");
             super.onDestroy();
         }
     }

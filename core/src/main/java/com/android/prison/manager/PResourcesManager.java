@@ -1,8 +1,7 @@
 package com.android.prison.manager;
 
 import android.content.Context;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -19,7 +18,7 @@ public class PResourcesManager implements IInjector {
     public void inject() {
         // This hook is not needed for the current approach
         // The resource loading issues are handled at the application level
-        Log.d(TAG, "PResourcesManager hook initialized");
+        Logger.d(TAG, "PResourcesManager hook initialized");
     }
 
     @Override
@@ -71,7 +70,7 @@ public class PResourcesManager implements IInjector {
                 }
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to load app label: " + e.getMessage());
+            Logger.w(TAG, "Failed to load app label: " + e.getMessage());
         }
         
         return "Unknown App";
@@ -90,7 +89,7 @@ public class PResourcesManager implements IInjector {
                 return packageName.toString();
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to get package name via field: " + e.getMessage());
+            Logger.w(TAG, "Failed to get package name via field: " + e.getMessage());
         }
         
         // Try getPackageName method
@@ -101,7 +100,7 @@ public class PResourcesManager implements IInjector {
                 return packageName.toString();
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to get package name via method: " + e.getMessage());
+            Logger.w(TAG, "Failed to get package name via method: " + e.getMessage());
         }
         
         // Try toString method to see if it contains package info
@@ -114,7 +113,7 @@ public class PResourcesManager implements IInjector {
                 return toString.substring(start, end);
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to get package name via toString: " + e.getMessage());
+            Logger.w(TAG, "Failed to get package name via toString: " + e.getMessage());
         }
         
         return null;
@@ -141,7 +140,7 @@ public class PResourcesManager implements IInjector {
                                 return drawable;
                             }
                         } catch (Exception e) {
-                            Log.w(TAG, "Failed to load icon via getDrawable: " + e.getMessage());
+                            Logger.w(TAG, "Failed to load icon via getDrawable: " + e.getMessage());
                         }
                     }
                 }
@@ -154,7 +153,7 @@ public class PResourcesManager implements IInjector {
                 }
             }
         } catch (Exception e) {
-            Log.w(TAG, "Failed to load app icon: " + e.getMessage());
+            Logger.w(TAG, "Failed to load app icon: " + e.getMessage());
         }
         return null;
     }
@@ -176,7 +175,7 @@ public class PResourcesManager implements IInjector {
             Method getPackageManagerMethod = prisonCoreClass.getMethod("getPackageManager");
             return getPackageManagerMethod.invoke(null);
         } catch (Exception e) {
-            Log.w(TAG, "Failed to get PackageManager: " + e.getMessage());
+            Logger.w(TAG, "Failed to get PackageManager: " + e.getMessage());
             return null;
         }
     }
@@ -196,12 +195,12 @@ public class PResourcesManager implements IInjector {
                 disableOverlayField.setAccessible(true);
                 disableOverlayField.setBoolean(resourcesManager, true);
             } catch (Exception e) {
-                Log.w(TAG, "Could not set overlay loading flag: " + e.getMessage());
+                Logger.w(TAG, "Could not set overlay loading flag: " + e.getMessage());
             }
             
             return resourcesManager;
         } catch (Exception e) {
-            Log.w(TAG, "Failed to create safe resource manager: " + e.getMessage());
+            Logger.w(TAG, "Failed to create safe resource manager: " + e.getMessage());
             return null;
         }
     }

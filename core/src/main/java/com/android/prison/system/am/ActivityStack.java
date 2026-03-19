@@ -16,8 +16,7 @@ import android.os.IInterface;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -101,7 +100,7 @@ public class ActivityStack {
         if (resolveInfo == null || resolveInfo.activityInfo == null) {
             return 0;
         }
-        Log.d(TAG, "startActivityLocked : " + resolveInfo.activityInfo);
+        Logger.d(TAG, "startActivityLocked : " + resolveInfo.activityInfo);
         ActivityInfo activityInfo = resolveInfo.activityInfo;
 
         ActivityRecord sourceRecord = findActivityRecordByToken(userId, resultTo);
@@ -168,7 +167,7 @@ public class ActivityStack {
                         ActivityRecord next = targetActivityRecord.task.activities.get(i);
                         if (next != targetActivityRecord) {
                             next.finished = true;
-                            Log.d(TAG, "makerFinish: " + next.component.toString());
+                            Logger.d(TAG, "makerFinish: " + next.component.toString());
                         } else {
                             if (singleTop) {
                                 newIntentRecord = targetActivityRecord;
@@ -465,7 +464,7 @@ public class ActivityStack {
             record.processRecord = processRecord;
             record.task = taskRecord;
             taskRecord.addTopActivity(record);
-            Log.d(TAG, "onActivityCreated : " + record.component.toString());
+            Logger.d(TAG, "onActivityCreated : " + record.component.toString());
         }
     }
 
@@ -476,7 +475,7 @@ public class ActivityStack {
             if (activityRecord == null) {
                 return;
             }
-            Log.d(TAG, "onActivityResumed : " + activityRecord.component.toString());
+            Logger.d(TAG, "onActivityResumed : " + activityRecord.component.toString());
             activityRecord.task.removeActivity(activityRecord);
             activityRecord.task.addTopActivity(activityRecord);
         }
@@ -490,7 +489,7 @@ public class ActivityStack {
                 return;
             }
             activityRecord.finished = true;
-            Log.d(TAG, "onActivityDestroyed : " + activityRecord.component.toString());
+            Logger.d(TAG, "onActivityDestroyed : " + activityRecord.component.toString());
             activityRecord.task.removeActivity(activityRecord);
         }
     }
@@ -503,7 +502,7 @@ public class ActivityStack {
                 return;
             }
             activityRecord.finished = true;
-            Log.d(TAG, "onFinishActivity : " + activityRecord.component.toString());
+            Logger.d(TAG, "onFinishActivity : " + activityRecord.component.toString());
         }
     }
 

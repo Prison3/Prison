@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import android.content.Intent;
-import android.util.Log;
+import com.android.prison.utils.Logger;
 import java.util.List;
 
 /**
@@ -21,7 +21,7 @@ public class SystemHookManager {
      */
     public static void installAllHooks() {
         try {
-            Log.d(TAG, "Installing system hooks...");
+            Logger.d(TAG, "Installing system hooks...");
             
             // Hook ClientTransactionListenerController
             hookClientTransactionListenerController();
@@ -32,9 +32,9 @@ public class SystemHookManager {
             // Hook ActivityThread directly
             hookActivityThread();
             
-            Log.d(TAG, "System hooks installed successfully");
+            Logger.d(TAG, "System hooks installed successfully");
         } catch (Exception e) {
-            Log.e(TAG, "Failed to install system hooks: " + e.getMessage(), e);
+            Logger.e(TAG, "Failed to install system hooks: " + e.getMessage(), e);
         }
     }
     
@@ -46,7 +46,7 @@ public class SystemHookManager {
             // Try to find the ClientTransactionListenerController class
             Class<?> controllerClass = Class.forName("android.app.servertransaction.ClientTransactionListenerController");
             if (controllerClass != null) {
-                Log.d(TAG, "Found ClientTransactionListenerController class");
+                Logger.d(TAG, "Found ClientTransactionListenerController class");
                 
                 // Create a proxy that handles null contexts gracefully
                 Object proxy = Proxy.newProxyInstance(
@@ -62,11 +62,11 @@ public class SystemHookManager {
                                 if (args != null && args.length > 0) {
                                     return method.invoke(proxyObj, args);
                                 } else {
-                                    Log.w(TAG, "ClientTransactionListenerController called with null args, skipping");
+                                    Logger.w(TAG, "ClientTransactionListenerController called with null args, skipping");
                                     return null;
                                 }
                             } catch (Exception e) {
-                                Log.w(TAG, "Error in ClientTransactionListenerController proxy: " + e.getMessage());
+                                Logger.w(TAG, "Error in ClientTransactionListenerController proxy: " + e.getMessage());
                                 // Return gracefully instead of crashing
                                 return null;
                             }
@@ -80,7 +80,7 @@ public class SystemHookManager {
                 
             }
         } catch (Exception e) {
-            Log.w(TAG, "Could not hook ClientTransactionListenerController: " + e.getMessage());
+            Logger.w(TAG, "Could not hook ClientTransactionListenerController: " + e.getMessage());
         }
     }
     
@@ -92,7 +92,7 @@ public class SystemHookManager {
             // Try to find the ConfigurationController class
             Class<?> controllerClass = Class.forName("android.app.ConfigurationController");
             if (controllerClass != null) {
-                Log.d(TAG, "Found ConfigurationController class");
+                Logger.d(TAG, "Found ConfigurationController class");
                 
                 // Create a proxy that handles null contexts gracefully
                 Object proxy = Proxy.newProxyInstance(
@@ -108,11 +108,11 @@ public class SystemHookManager {
                                 if (args != null && args.length > 0) {
                                     return method.invoke(proxyObj, args);
                                 } else {
-                                    Log.w(TAG, "ConfigurationController called with null args, skipping");
+                                    Logger.w(TAG, "ConfigurationController called with null args, skipping");
                                     return null;
                                 }
                             } catch (Exception e) {
-                                Log.w(TAG, "Error in ConfigurationController proxy: " + e.getMessage());
+                                Logger.w(TAG, "Error in ConfigurationController proxy: " + e.getMessage());
                                 // Return gracefully instead of crashing
                                 return null;
                             }
@@ -126,7 +126,7 @@ public class SystemHookManager {
                 
             }
         } catch (Exception e) {
-            Log.w(TAG, "Could not hook ConfigurationController: " + e.getMessage());
+            Logger.w(TAG, "Could not hook ConfigurationController: " + e.getMessage());
         }
     }
     
@@ -138,12 +138,12 @@ public class SystemHookManager {
             // Try to find the ActivityThread class
             Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
             if (activityThreadClass != null) {
-                Log.d(TAG, "Found ActivityThread class");
+                Logger.d(TAG, "Found ActivityThread class");
                 
                 // Get the current ActivityThread instance
                 Object activityThread = PrisonCore.mainThread();
                 if (activityThread != null) {
-                    Log.d(TAG, "Found ActivityThread instance");
+                    Logger.d(TAG, "Found ActivityThread instance");
                     
                     // Try to hook the handleLaunchActivity method
                     try {
@@ -166,7 +166,7 @@ public class SystemHookManager {
                         );
                         
                         if (handleLaunchActivity != null) {
-                            Log.d(TAG, "Found handleLaunchActivity method");
+                            Logger.d(TAG, "Found handleLaunchActivity method");
                             
                             // Make the method accessible
                             handleLaunchActivity.setAccessible(true);
@@ -176,12 +176,12 @@ public class SystemHookManager {
                             
                         }
                     } catch (Exception e) {
-                        Log.w(TAG, "Could not hook handleLaunchActivity: " + e.getMessage());
+                        Logger.w(TAG, "Could not hook handleLaunchActivity: " + e.getMessage());
                     }
                 }
             }
         } catch (Exception e) {
-            Log.w(TAG, "Could not hook ActivityThread: " + e.getMessage());
+            Logger.w(TAG, "Could not hook ActivityThread: " + e.getMessage());
         }
     }
     
@@ -201,14 +201,14 @@ public class SystemHookManager {
                         Object currentInstance = field.get(activityThread);
                         if (currentInstance != null) {
                             field.set(activityThread, proxy);
-                            Log.d(TAG, "Successfully replaced " + controllerName + " instance");
+                            Logger.d(TAG, "Successfully replaced " + controllerName + " instance");
                             return;
                         }
                     }
                 }
                 
                 // If we couldn't find the field, try to create a new instance
-                Log.w(TAG, "Could not find " + controllerName + " field, trying to create new instance");
+                Logger.w(TAG, "Could not find " + controllerName + " field, trying to create new instance");
                 try {
                     // Try to find a constructor
                     java.lang.reflect.Constructor<?>[] constructors = controllerClass.getDeclaredConstructors();
@@ -216,15 +216,15 @@ public class SystemHookManager {
                         constructors[0].setAccessible(true);
                         Object newInstance = constructors[0].newInstance();
                         if (newInstance != null) {
-                            Log.d(TAG, "Created new " + controllerName + " instance");
+                            Logger.d(TAG, "Created new " + controllerName + " instance");
                         }
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Could not create new " + controllerName + " instance: " + e.getMessage());
+                    Logger.w(TAG, "Could not create new " + controllerName + " instance: " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            Log.w(TAG, "Could not replace " + controllerName + " instance: " + e.getMessage());
+            Logger.w(TAG, "Could not replace " + controllerName + " instance: " + e.getMessage());
         }
     }
     
@@ -267,17 +267,17 @@ public class SystemHookManager {
                                         }
                                     }
                                 } catch (Exception e) {
-                                    Log.w(TAG, "Could not iterate through activity records: " + e.getMessage());
+                                    Logger.w(TAG, "Could not iterate through activity records: " + e.getMessage());
                                 }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    Log.w(TAG, "Could not access activity records: " + e.getMessage());
+                    Logger.w(TAG, "Could not access activity records: " + e.getMessage());
                 }
             }
         } catch (Exception e) {
-            Log.w(TAG, "Error ensuring all activities have context: " + e.getMessage());
+            Logger.w(TAG, "Error ensuring all activities have context: " + e.getMessage());
         }
     }
 }

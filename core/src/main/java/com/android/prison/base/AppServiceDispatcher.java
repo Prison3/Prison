@@ -40,7 +40,7 @@ public class AppServiceDispatcher {
         if (intent == null || serviceInfo == null)
             return null;
 
-//        Log.d(TAG, "onBind: " + component.toString());
+//        Logger.d(TAG, "onBind: " + component.toString());
 
         Service service = getOrCreateService(serviceRecord);
         if (service == null)
@@ -73,7 +73,7 @@ public class AppServiceDispatcher {
             return START_NOT_STICKY;
         }
 
-//        Log.d(TAG, "onStartCommand: " + component.toString());
+//        Logger.d(TAG, "onStartCommand: " + component.toString());
         Service service = getOrCreateService(stubRecord);
         if (service == null)
             return START_NOT_STICKY;
@@ -101,7 +101,7 @@ public class AppServiceDispatcher {
             }
         }
         mService.clear();
-//        Log.d(TAG, "onDestroy: ");
+//        Logger.d(TAG, "onDestroy: ");
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
@@ -114,7 +114,7 @@ public class AppServiceDispatcher {
                 }
             }
         }
-//        Log.d(TAG, "onConfigurationChanged");
+//        Logger.d(TAG, "onConfigurationChanged");
     }
 
     public void onLowMemory() {
@@ -127,7 +127,7 @@ public class AppServiceDispatcher {
                 }
             }
         }
-//        Log.d(TAG, "onLowMemory");
+//        Logger.d(TAG, "onLowMemory");
     }
 
     public void onTrimMemory(int level) {
@@ -140,7 +140,7 @@ public class AppServiceDispatcher {
                 }
             }
         }
-        // Log.d(TAG, "onTrimMemory");
+        // Logger.d(TAG, "onTrimMemory");
     }
 
     public boolean onUnbind(Intent proxyIntent) {
@@ -172,7 +172,7 @@ public class AppServiceDispatcher {
                     mService.remove(new Intent.FilterComparison(intent));
                 }
                 record.setRebind(true);
-//                Log.d(TAG, "onUnbind：" + stubRecord.mServiceIntent.getComponent().toString());
+//                Logger.d(TAG, "onUnbind：" + stubRecord.mServiceIntent.getComponent().toString());
             }
         } catch (Throwable e) {
             e.printStackTrace();

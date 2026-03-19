@@ -1,8 +1,7 @@
 package com.android.prison.system;
 
 import android.content.Context;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,9 +58,9 @@ public class JarManager {
             try {
                 initializeJarEnvironment();
                 mIsInitialized.set(true);
-                Log.i(TAG, "JAR environment initialized successfully");
+                Logger.i(TAG, "JAR environment initialized successfully");
             } catch (Exception e) {
-                Log.e(TAG, "Failed to initialize JAR environment", e);
+                Logger.e(TAG, "Failed to initialize JAR environment", e);
             } finally {
                 mIsInitializing.set(false);
             }
@@ -79,9 +78,9 @@ public class JarManager {
         try {
             initializeJarEnvironment();
             mIsInitialized.set(true);
-            Log.i(TAG, "JAR environment initialized successfully");
+            Logger.i(TAG, "JAR environment initialized successfully");
         } catch (Exception e) {
-            Log.e(TAG, "Failed to initialize JAR environment", e);
+            Logger.e(TAG, "Failed to initialize JAR environment", e);
             throw new RuntimeException("JAR environment initialization failed", e);
         }
     }
@@ -98,7 +97,7 @@ public class JarManager {
      */
     public File getJarFile(String jarName) {
         if (!mIsInitialized.get()) {
-            Log.w(TAG, "JAR environment not initialized, attempting sync initialization");
+            Logger.w(TAG, "JAR environment not initialized, attempting sync initialization");
             initializeSync();
         }
         
@@ -107,7 +106,7 @@ public class JarManager {
             return jarFile;
         }
         
-        Log.w(TAG, "JAR file not found in cache: " + jarName);
+        Logger.w(TAG, "JAR file not found in cache: " + jarName);
         return null;
     }
     
@@ -134,13 +133,13 @@ public class JarManager {
             throw new IllegalStateException("Prison context is null");
         }
         
-        Log.d(TAG, "Starting JAR environment initialization");
+        Logger.d(TAG, "Starting JAR environment initialization");
         
         for (JarConfig.JarDefinition jarDef : REQUIRED_JARS) {
             try {
                 processJarFile(context, jarDef);
             } catch (Exception e) {
-                Log.e(TAG, "Failed to process JAR file: " + jarDef.getAssetName(), e);
+                Logger.e(TAG, "Failed to process JAR file: " + jarDef.getAssetName(), e);
                 // Continue with other JARs, don't fail completely
             }
         }
@@ -154,7 +153,7 @@ public class JarManager {
      */
     private void processJarFile(Context context, JarConfig.JarDefinition jarDef) throws IOException {
         String jarName = jarDef.getAssetName();
-        Log.d(TAG, "Processing JAR file: " + jarName + " (" + jarDef.getDescription() + ")");
+        Logger.d(TAG, "Processing JAR file: " + jarName + " (" + jarDef.getDescription() + ")");
         
         // Store jar definition
         mJarDefinitions.put(jarName, jarDef);
@@ -167,7 +166,7 @@ public class JarManager {
         
         // Check if file already exists and is valid
         if (targetFile.exists() && isFileValid(targetFile, jarDef)) {
-            Log.d(TAG, "JAR file already exists and is valid: " + jarName);
+            Logger.d(TAG, "JAR file already exists and is valid: " + jarName);
             mJarCache.put(jarName, targetFile);
             return;
         }
@@ -181,7 +180,7 @@ public class JarManager {
         }
         
         mJarCache.put(jarName, targetFile);
-        Log.d(TAG, "Successfully processed JAR file: " + jarName);
+        Logger.d(TAG, "Successfully processed JAR file: " + jarName);
     }
     
     /**
@@ -218,7 +217,7 @@ public class JarManager {
                 try {
                     inputStream.close();
                 } catch (IOException e) {
-                    Log.w(TAG, "Failed to close input stream for: " + jarName, e);
+                    Logger.w(TAG, "Failed to close input stream for: " + jarName, e);
                 }
             }
         }
@@ -231,18 +230,18 @@ public class JarManager {
      */
     private boolean isFileValid(File file, JarConfig.JarDefinition jarDef) {
         if (!file.exists()) {
-            Log.w(TAG, "File does not exist: " + file);
+            Logger.w(TAG, "File does not exist: " + file);
             return false;
         }
         
         if (file.length() == 0) {
-            Log.w(TAG, "File is empty: " + file);
+            Logger.w(TAG, "File is empty: " + file);
             return false;
         }
         
         // Use configuration-based validation
         if (!JarConfig.validateFile(file, jarDef)) {
-            Log.w(TAG, "File validation failed for " + jarDef.getAssetName() + 
+            Logger.w(TAG, "File validation failed for " + jarDef.getAssetName() + 
                       " (size: " + file.length() + ", min: " + jarDef.getMinSize() + ")");
             return false;
         }
@@ -271,18 +270,18 @@ public class JarManager {
             File jarFile = mJarCache.get(jarName);
             if (jarFile == null || !jarFile.exists()) {
                 if (jarDef.isRequired()) {
-                    Log.e(TAG, "Required JAR file missing: " + jarName);
+                    Logger.e(TAG, "Required JAR file missing: " + jarName);
                     allValid = false;
                 } else {
-                    Log.w(TAG, "Optional JAR file missing: " + jarName);
+                    Logger.w(TAG, "Optional JAR file missing: " + jarName);
                 }
             }
         }
         
         if (!allValid) {
-            Log.w(TAG, "JAR environment verification failed - some required files are missing");
+            Logger.w(TAG, "JAR environment verification failed - some required files are missing");
         } else {
-            Log.i(TAG, "JAR environment verification passed");
+            Logger.i(TAG, "JAR environment verification passed");
         }
     }
     
@@ -293,7 +292,7 @@ public class JarManager {
         mJarCache.clear();
         mJarHashes.clear();
         mJarDefinitions.clear();
-        Log.d(TAG, "JAR cache cleared");
+        Logger.d(TAG, "JAR cache cleared");
     }
     
     /**

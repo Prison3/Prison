@@ -1,7 +1,5 @@
 package com.android.prison.utils;
-
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -44,7 +42,7 @@ public class TransactionThrottler {
         // Check if we've exceeded the failure threshold
         if (failureCount.get() >= MAX_FAILURES_PER_WINDOW) {
             lastThrottleTime.set(currentTime);
-            Log.w(TAG, "Throttling transactions due to " + failureCount.get() + " failures in window");
+            Logger.w(TAG, "Throttling transactions due to " + failureCount.get() + " failures in window");
             return true;
         }
         
@@ -71,7 +69,7 @@ public class TransactionThrottler {
             failureCount.incrementAndGet();
         }
         
-        Log.d(TAG, "Recorded transaction failure, count: " + failureCount.get());
+        Logger.d(TAG, "Recorded transaction failure, count: " + failureCount.get());
     }
     
     /**
@@ -81,7 +79,7 @@ public class TransactionThrottler {
         failureCount.set(0);
         windowStartTime.set(0);
         lastThrottleTime.set(0);
-        Log.d(TAG, "Reset transaction throttler");
+        Logger.d(TAG, "Reset transaction throttler");
     }
     
     /**

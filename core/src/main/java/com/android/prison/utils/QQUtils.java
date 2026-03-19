@@ -1,8 +1,7 @@
 package com.android.prison.utils;
 
 import android.content.Context;
-import android.util.Log;
-
+import com.android.prison.utils.Logger;
 import java.lang.reflect.Field;
 
 /**
@@ -15,7 +14,7 @@ public class QQUtils {
             Field uin_reportlog_level = aClass.getDeclaredField("UIN_REPORTLOG_LEVEL");
             uin_reportlog_level.setAccessible(true);
             uin_reportlog_level.set(null, 1000);
-            Log.d("QQUtils", "hackLog: success");
+            Logger.d("QQUtils", "hackLog: success");
         } catch (Throwable e) {
             e.printStackTrace();
         }

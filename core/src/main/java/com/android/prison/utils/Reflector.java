@@ -221,7 +221,7 @@ public class Reflector {
                 cls = Class.forName(name, initialize, loader);
                 return on(cls, null);
             } catch (Throwable e) {
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
                 return on(cls, e);
             }
         }
@@ -270,7 +270,7 @@ public class Reflector {
                 super.constructor(parameterTypes);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -285,7 +285,7 @@ public class Reflector {
                 return super.newInstance(initargs);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return null;
         }
@@ -300,7 +300,7 @@ public class Reflector {
                 super.bind(obj);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -321,7 +321,7 @@ public class Reflector {
                 super.field(name);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -336,7 +336,7 @@ public class Reflector {
                 return super.get();
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return null;
         }
@@ -351,7 +351,7 @@ public class Reflector {
                 return super.get(caller);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return null;
         }
@@ -366,7 +366,7 @@ public class Reflector {
                 super.set(value);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -381,7 +381,7 @@ public class Reflector {
                 super.set(caller, value);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -396,7 +396,7 @@ public class Reflector {
                 super.method(name, parameterTypes);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return this;
         }
@@ -411,7 +411,7 @@ public class Reflector {
                 return super.call(args);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return null;
         }
@@ -426,7 +426,7 @@ public class Reflector {
                 return super.callByCaller(caller, args);
             } catch (Throwable e) {
                 mIgnored = e;
-//                Log.w(LOG_TAG, "Oops!", e);
+//                Logger.w(LOG_TAG, "Oops!", e);
             }
             return null;
         }
