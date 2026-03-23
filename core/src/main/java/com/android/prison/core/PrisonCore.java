@@ -51,16 +51,6 @@ public final class PrisonCore {
     private String mPackageName;
 
     private PrisonCore() {
-        try {
-            SimpleCrashFix.installSimpleFix();
-            StackTraceFilter.install();
-            SocialMediaAppCrashPrevention.initialize();
-            DexCrashPrevention.initialize();
-            NativeCrashPrevention.initialize();
-            CrashMonitor.initialize();
-        } catch (Exception e) {
-            Logger.w(TAG, "Failed to install simple crash fix or stack trace filter at class loading: " + e.getMessage());
-        }
     }
 
     public static PrisonCore get() {
@@ -95,6 +85,18 @@ public final class PrisonCore {
         mSettings = settings;
         mAppCallback = appCallback;
         mProcessType = ProcessType.determineProcessType(mContext);
+
+        try {
+            SimpleCrashFix.installSimpleFix();
+            StackTraceFilter.install();
+            SocialMediaAppCrashPrevention.initialize();
+            DexCrashPrevention.initialize();
+            NativeCrashPrevention.initialize();
+            CrashMonitor.initialize();
+        } catch (Exception e) {
+            Logger.w(TAG, "Failed to install simple crash fix or stack trace filter at class loading: " + e.getMessage());
+        }
+
         setEssentialProperties(context);
         initNotificationManager();
         // Initialize VPN service for internet access
