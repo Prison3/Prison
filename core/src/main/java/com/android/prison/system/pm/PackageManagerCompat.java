@@ -18,6 +18,7 @@ import android.content.res.Resources;
 import android.os.Build;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import com.android.prison.interfaces.android.content.pm.BRApplicationInfoL;
@@ -296,7 +297,9 @@ public class PackageManagerCompat {
         if ((flags & PackageManager.GET_META_DATA) != 0) {
             ai.metaData = p.mAppMetaData;
         }
-        ai.dataDir = PEnvironment.getDataDir(ai.packageName, userId).getAbsolutePath();
+        // Logical system paths so Context.getFilesDir().getAbsolutePath() matches /data/user/.../files;
+        // native IO redirect maps these to PEnvironment physical storage (see IOCore.setupDataDirectoryRedirects).
+        ai.dataDir = String.format(Locale.US, "/data/user/%d/%s", userId, ai.packageName);
         if (!p.installOption.isFlag(InstallOption.FLAG_SYSTEM)) {
             ai.nativeLibraryDir = PEnvironment.getAppLibDir(ai.packageName).getAbsolutePath();
         }
